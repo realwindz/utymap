@@ -13,24 +13,25 @@ using namespace utymap::mapcss;
 using namespace utymap::meshing;
 
 namespace {
-
     typedef Vector2 DPoint;
     auto colorGradient = std::make_shared<const ColorGradient>(ColorGradient::GradientData{ { 0, Color(0, 0, 0, 0) } });
+
+    struct Meshing_MeshingFixture
+    {
+        Meshing_MeshingFixture() : eleProvider(), builder(eleProvider)
+        {
+            BOOST_TEST_MESSAGE("setup fixture");
+        }
+        ~Meshing_MeshingFixture()       { BOOST_TEST_MESSAGE("teardown fixture"); }
+
+        FlatElevationProvider eleProvider;
+        MeshBuilder builder;
+    };
 }
-
-struct Meshing_MeshingFixture 
-{
-    Meshing_MeshingFixture(): eleProvider(), builder(eleProvider)
-                                    { BOOST_TEST_MESSAGE("setup fixture"); }
-    ~Meshing_MeshingFixture()       { BOOST_TEST_MESSAGE("teardown fixture"); }
-
-    FlatElevationProvider eleProvider;
-    MeshBuilder builder;
-};
 
 BOOST_FIXTURE_TEST_SUITE(Meshing_MeshBuilder, Meshing_MeshingFixture)
 
-BOOST_AUTO_TEST_CASE(GivenPolygon_WhenAddPolygon_RefinesCorrectly)
+BOOST_AUTO_TEST_CASE(GivenPolygon_WhenAddPolygon_ThenRefinesCorrectly)
 {
     Mesh mesh("");
     Polygon polygon(4, 0);
@@ -55,7 +56,7 @@ BOOST_AUTO_TEST_CASE(GivenPolygon_WhenAddPolygon_RefinesCorrectly)
     BOOST_CHECK_EQUAL(mesh.triangles.size() / 3, 34);
 }
 
-BOOST_AUTO_TEST_CASE(GivenPolygonWithHole_WhenAddPolygon_RefinesCorrectly)
+BOOST_AUTO_TEST_CASE(GivenPolygonWithHole_WhenAddPolygon_ThenRefinesCorrectly)
 {
     Mesh mesh("");
     Polygon polygon(8, 1);
@@ -87,7 +88,7 @@ BOOST_AUTO_TEST_CASE(GivenPolygonWithHole_WhenAddPolygon_RefinesCorrectly)
     BOOST_CHECK(mesh.triangles.size() > 0);
 }
 
-BOOST_AUTO_TEST_CASE(GivenPolygonProcessedByGridSplitter_WhenAddPolygon_RefinesCorrectly)
+BOOST_AUTO_TEST_CASE(GivenPolygonProcessedByGridSplitter_WhenAddPolygon_ThenRefinesCorrectly)
 {
     std::vector<Vector2> contour;
     LineGridSplitter splitter;
@@ -124,7 +125,7 @@ BOOST_AUTO_TEST_CASE(GivenPolygonProcessedByGridSplitter_WhenAddPolygon_RefinesC
     BOOST_CHECK(mesh.triangles.size() > 0);
 }
 
-BOOST_AUTO_TEST_CASE(GivenPolygonWithSharePoint_WhenAddPolygon_RefinesCorrectly)
+BOOST_AUTO_TEST_CASE(GivenPolygonWithSharePoint_WhenAddPolygon_ThenRefinesCorrectly)
 {
     Polygon polygon(8, 0);
     polygon.addContour({ { 0, 0 }, { 10, 0 }, { 10, 10 }, { 0, 10 } });

@@ -7,17 +7,19 @@
 
 using namespace utymap::formats;
 
-struct Formats_Osm_Xml_OsmXmlParserFixture
-{
-    Formats_Osm_Xml_OsmXmlParserFixture() :
-        istream(TEST_XML_FILE, std::ios::in)
+namespace {
+    struct Formats_Osm_Xml_OsmXmlParserFixture
     {
-    }
+        Formats_Osm_Xml_OsmXmlParserFixture() :
+            istream(TEST_XML_FILE, std::ios::in)
+        {
+        }
 
-    OsmXmlParser<TestOsmDataVisitor> parser;
-    TestOsmDataVisitor visitor;
-    std::ifstream istream;
-};
+        OsmXmlParser<TestOsmDataVisitor> parser;
+        TestOsmDataVisitor visitor;
+        std::ifstream istream;
+    };
+}
 
 BOOST_FIXTURE_TEST_SUITE(Formats_Osm_Xml_Parser, Formats_Osm_Xml_OsmXmlParserFixture)
 

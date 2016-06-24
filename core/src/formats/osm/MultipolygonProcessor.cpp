@@ -109,7 +109,7 @@ void MultipolygonProcessor::process()
     CoordinateSequences sequences;
     for (const auto& member : members_) {
 
-        if (member.type != "way") 
+        if (member.type != "w")
             continue;
 
         Coordinates coordinates;

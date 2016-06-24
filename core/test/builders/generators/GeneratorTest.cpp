@@ -23,34 +23,34 @@ using namespace utymap::utils;
 namespace {
     const std::string stylesheet = "node|z1[natural=tree] { color:gradient(red);}";
     auto colorGradient = std::make_shared<const ColorGradient>(ColorGradient::GradientData{ { 0, Color(0, 0, 0, 0) } });
-}
 
-struct Builders_GeneratorFixture
-{
-    Builders_GeneratorFixture() :
-        dependencyProvider(),
-        mesh(""),
-        style(dependencyProvider.getStyleProvider(stylesheet)
+    struct Builders_Generators_GeneratorFixture
+    {
+        Builders_Generators_GeneratorFixture() :
+            dependencyProvider(),
+            mesh(""),
+            style(dependencyProvider.getStyleProvider(stylesheet)
             ->forElement(ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), { { "natural", "tree" } }), 1)),
-        builderContext(
-            QuadKey { 1, 1, 1 },
+            builderContext(
+            QuadKey{ 1, 1, 1 },
             *dependencyProvider.getStyleProvider(stylesheet),
             *dependencyProvider.getStringTable(),
             *dependencyProvider.getElevationProvider(),
             [](const Mesh&) {},
             [](const Element&) {}),
-        meshContext(mesh, style)
-    {
-    }
+            meshContext(mesh, style)
+        {
+        }
 
-    DependencyProvider dependencyProvider;
-    Mesh mesh;
-    Style style;
-    BuilderContext builderContext;
-    MeshContext meshContext;
-};
+        DependencyProvider dependencyProvider;
+        Mesh mesh;
+        Style style;
+        BuilderContext builderContext;
+        MeshContext meshContext;
+    };
+}
 
-BOOST_FIXTURE_TEST_SUITE(Builders_Generators_Generator, Builders_GeneratorFixture)
+BOOST_FIXTURE_TEST_SUITE(Builders_Generators_Generator, Builders_Generators_GeneratorFixture)
 
 BOOST_AUTO_TEST_CASE(GivenIcoSphereGeneratorWithSimpleData_WhenGenerate_ThenCanGenerateMesh)
 {

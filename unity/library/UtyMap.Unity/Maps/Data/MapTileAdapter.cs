@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UtyMap.Unity.Core;
 using UtyMap.Unity.Core.Models;
 using UtyMap.Unity.Core.Tiling;
@@ -21,6 +22,8 @@ namespace UtyMap.Unity.Maps.Data
         private readonly Tile _tile;
         private readonly IObserver<Union<Element, Mesh>> _observer;
         private readonly ITrace _trace;
+
+        private static Regex ElementNameRegex = new Regex("^(building|barrier):([0-9]*)", RegexOptions.Compiled);
 
         public MapTileAdapter(Tile tile, IObserver<Union<Element, Mesh>> observer, ITrace trace)
         {
@@ -53,6 +56,10 @@ namespace UtyMap.Unity.Maps.Data
             }
             else
             {
+                long id;
+                if (!ShouldLoad(name, out id))
+                    return;
+
                 worldPoints = new Vector3[vertexCount / 3];
                 for (int i = 0; i < vertices.Length; i += 3)
                     worldPoints[i / 3] = _tile.Projection
@@ -61,6 +68,8 @@ namespace UtyMap.Unity.Maps.Data
                 unityColors = new Color[colorCount];
                 for (int i = 0; i < colorCount; ++i)
                     unityColors[i] = ColorUtils.FromInt(colors[i]);
+
+                _tile.Register(id);
             }
 
             Mesh mesh = new Mesh(name, worldPoints, triangles, unityColors);
@@ -95,6 +104,19 @@ namespace UtyMap.Unity.Maps.Data
             for (int i = 0; i < data.Length; i += 2)
                 map.Add(data[i], data[i + 1]);
             return map;
+        }
+
+        private bool ShouldLoad(string name, out long id)
+        {
+            var match = ElementNameRegex.Match(name);
+            if (!match.Success)
+            {
+                id = 0;
+                return true;
+            }
+
+            id = long.Parse(match.Groups[2].Value);
+            return !_tile.Has(id);
         }
 
         #endregion

@@ -11,34 +11,36 @@
 using namespace utymap::entities;
 using namespace utymap::mapcss;
 
-struct Index_StyleProviderFixture
-{
-    Index_StyleProviderFixture() :
-        dependencyProvider(),
-        stylesheet(new StyleSheet())
+namespace {
+    struct Index_StyleProviderFixture
     {
-        stylesheet->rules.push_back(Rule());
-    }
-
-    void setSingleSelector(int zoomStart, int zoomEnd,
-        const std::initializer_list<std::string>& names,
-        const std::initializer_list<utymap::mapcss::Condition>& conditions)
-    {
-        Selector selector;
-        selector.names.insert(selector.names.begin(), names.begin(), names.end());
-        selector.zoom.start = zoomStart;
-        selector.zoom.end = zoomEnd;
-        for (const auto& condition : conditions) {
-            selector.conditions.push_back(condition);
+        Index_StyleProviderFixture() :
+            dependencyProvider(),
+            stylesheet(new StyleSheet())
+        {
+            stylesheet->rules.push_back(Rule());
         }
-        stylesheet->rules[0].selectors.push_back(selector);
-        styleProvider = std::make_shared<StyleProvider>(*stylesheet, *dependencyProvider.getStringTable());
-    }
 
-    DependencyProvider dependencyProvider;
-    std::shared_ptr<StyleProvider> styleProvider;
-    std::shared_ptr<StyleSheet> stylesheet;
-};
+        void setSingleSelector(int zoomStart, int zoomEnd,
+            const std::initializer_list<std::string>& names,
+            const std::initializer_list<utymap::mapcss::Condition>& conditions)
+        {
+            Selector selector;
+            selector.names.insert(selector.names.begin(), names.begin(), names.end());
+            selector.zoom.start = zoomStart;
+            selector.zoom.end = zoomEnd;
+            for (const auto& condition : conditions) {
+                selector.conditions.push_back(condition);
+            }
+            stylesheet->rules[0].selectors.push_back(selector);
+            styleProvider = std::make_shared<StyleProvider>(*stylesheet, *dependencyProvider.getStringTable());
+        }
+
+        DependencyProvider dependencyProvider;
+        std::shared_ptr<StyleProvider> styleProvider;
+        std::shared_ptr<StyleSheet> stylesheet;
+    };
+}
 
 BOOST_FIXTURE_TEST_SUITE(Index_StyleProvider, Index_StyleProviderFixture)
 

@@ -8,52 +8,54 @@
 using namespace utymap::entities;
 using namespace utymap::utils;
 
-// Use global variable as it is used inside lambda which is passed as function.
-bool isCalled;
+namespace {
+    // Use global variable as it is used inside lambda which is passed as function.
+    bool isCalled;
 
-struct ExportLibFixture {
-    ExportLibFixture()
-    {
-        ::configure(TEST_ASSETS_PATH, TEST_ASSETS_PATH, TEST_ELEVATION_DIRECTORY,
-            [](const char* message) { BOOST_FAIL(message); });
-    }
+    struct ExportLibFixture {
+        ExportLibFixture()
+        {
+            ::configure(TEST_ASSETS_PATH, TEST_ASSETS_PATH, TEST_ELEVATION_DIRECTORY,
+                [](const char* message) { BOOST_FAIL(message); });
+        }
 
-    void loadQuadKeys(int levelOfDetails, int startX, int endX, int startY, int endY)
-    {
-        isCalled = false;
-        for (int i = startX; i <= endX; ++i) {
-            for (int j = startY; j <= endY; ++j) {
-                ::preloadElevation(i, j, levelOfDetails);
-                ::loadQuadKey(TEST_MAPCSS_DEFAULT, i, j, levelOfDetails,
-                    [](const char* name, const double* vertices, int vertexCount,
-                       const int* triangles, int triCount, const int* colors, int colorCount) {
-                    isCalled = true;
-                    BOOST_CHECK_GT(vertexCount, 0);
-                    BOOST_CHECK_GT(triCount, 0);
-                    BOOST_CHECK_GT(colorCount, 0);
-                },
-                    [](uint64_t id, const char** tags, int size, const double* vertices,
-                       int vertexCount, const char** style, int styleSize) {
-                    isCalled = true;
-                },
-                    [](const char* message) { 
+        void loadQuadKeys(int levelOfDetails, int startX, int endX, int startY, int endY)
+        {
+            isCalled = false;
+            for (int i = startX; i <= endX; ++i) {
+                for (int j = startY; j <= endY; ++j) {
+                    ::preloadElevation(i, j, levelOfDetails);
+                    ::loadQuadKey(TEST_MAPCSS_DEFAULT, i, j, levelOfDetails,
+                        [](const char* name, const double* vertices, int vertexCount,
+                        const int* triangles, int triCount, const int* colors, int colorCount) {
+                        isCalled = true;
+                        BOOST_CHECK_GT(vertexCount, 0);
+                        BOOST_CHECK_GT(triCount, 0);
+                        BOOST_CHECK_GT(colorCount, 0);
+                    },
+                        [](uint64_t id, const char** tags, int size, const double* vertices,
+                        int vertexCount, const char** style, int styleSize) {
+                        isCalled = true;
+                    },
+                        [](const char* message) {
                         BOOST_FAIL(message);
                     }
-                );
+                    );
+                }
             }
+            BOOST_CHECK(isCalled);
         }
-        BOOST_CHECK(isCalled);
-    }
 
-    static void callback(const char* msg) { BOOST_CHECK(msg == nullptr); }
+        static void callback(const char* msg) { BOOST_CHECK(msg == nullptr); }
 
-    ~ExportLibFixture()
-    {
-        ::cleanup();
-        std::remove((std::string(TEST_ASSETS_PATH) + "string.idx").c_str());
-        std::remove((std::string(TEST_ASSETS_PATH) + "string.dat").c_str());
-    }
-};
+        ~ExportLibFixture()
+        {
+            ::cleanup();
+            std::remove((std::string(TEST_ASSETS_PATH) + "string.idx").c_str());
+            std::remove((std::string(TEST_ASSETS_PATH) + "string.dat").c_str());
+        }
+    };
+}
 
 BOOST_FIXTURE_TEST_SUITE(ExportLib, ExportLibFixture)
 

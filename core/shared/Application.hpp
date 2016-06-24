@@ -37,7 +37,7 @@ class Application
 {
     const std::string InMemoryStorageKey = "InMemory";
     const std::string PersistentStorageKey = "OnDisk";
-    const int SrtmElevationLodStart = 12;
+    const int SrtmElevationLodStart = 42; // NOTE: disable for initial MVP
 
 public:
     // Composes object graph.

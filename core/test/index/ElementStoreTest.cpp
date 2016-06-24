@@ -48,10 +48,6 @@ namespace {
 
     struct Index_ElementStoreFixture
     {
-        Index_ElementStoreFixture() :
-            dependencyProvider()
-        {
-        }
         DependencyProvider dependencyProvider;
     };
 
@@ -221,7 +217,7 @@ BOOST_AUTO_TEST_CASE(GivenAreaBiggerThanTile_WhenStore_GeometryIsEmpty)
     elementStore.store(area, LodRange(1, 1),
         *dependencyProvider.getStyleProvider("area|z1[test=Foo] { key:val; clip: true;}"));
 
-    BOOST_CHECK_EQUAL(elementStore.times, 4);
+    BOOST_CHECK_EQUAL(elementStore.times, 1);
 }
 
 BOOST_AUTO_TEST_CASE(GivenRelationOfPolygonWithHole_WhenStore_AreaIsReturnedWithClippedGeometry)

@@ -240,14 +240,15 @@ public:
 
     inline std::shared_ptr<const ColorGradient> getGradient(const std::string& key)
     {
-        if (gradients.find(key) == gradients.end()) {
+        auto gradientPair = gradients.find(key);
+        if (gradientPair == gradients.end()) {
             auto gradient = utymap::utils::GradientUtils::parseGradient(key);
             if (gradient->empty())
                 throw MapCssException("Invalid gradient: " + key);
             // TODO store it in map in thread safe way
             return gradient;
         }
-        return gradients[key];
+        return gradientPair->second;
     }
 };
 

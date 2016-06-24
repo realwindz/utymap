@@ -4,9 +4,11 @@
 
 using namespace utymap::utils;
 
-BOOST_AUTO_TEST_SUITE(Utils_NoiseUtils)
+namespace {
+    const double Tolerance = 1e-3;
+}
 
-const double Tolerance = 1e-3;
+BOOST_AUTO_TEST_SUITE(Utils_NoiseUtils)
 
 BOOST_AUTO_TEST_CASE(GivenTestValues_WhenPerlin3d_ThenReturnExpectedValues)
 {

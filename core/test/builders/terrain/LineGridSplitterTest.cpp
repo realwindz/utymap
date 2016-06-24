@@ -6,13 +6,15 @@ using namespace ClipperLib;
 using namespace utymap::builders;
 using namespace utymap::meshing;
 
-typedef std::vector<Vector2> DoublePoints;
-typedef std::vector<IntPoint> IntPoints;
-const double Precision = 0.1e-9;
+namespace {
+    typedef std::vector<Vector2> DoublePoints;
+    typedef std::vector<IntPoint> IntPoints;
+    const double Precision = 0.1e-9;
+}
 
 BOOST_AUTO_TEST_SUITE(Builders_Terrain_LineGridSplitter)
 
-BOOST_AUTO_TEST_CASE(GivenHorizontal_WhenSplitWithIntStep_CanSplit)
+BOOST_AUTO_TEST_CASE(GivenHorizontal_WhenSplitWithIntStep_ThenCanSplit)
 {
     IntPoint start(0, 0);
     IntPoint end(10, 0);
@@ -27,7 +29,7 @@ BOOST_AUTO_TEST_CASE(GivenHorizontal_WhenSplitWithIntStep_CanSplit)
     }
 }
 
-BOOST_AUTO_TEST_CASE(GivenVertical_WhenSplitWithIntStep_CanSplit)
+BOOST_AUTO_TEST_CASE(GivenVertical_WhenSplitWithIntStep_ThenCanSplit)
 {
     IntPoint start(0, 0);
     IntPoint end(0, 10);
@@ -42,7 +44,7 @@ BOOST_AUTO_TEST_CASE(GivenVertical_WhenSplitWithIntStep_CanSplit)
     }
 }
 
-BOOST_AUTO_TEST_CASE(Given45Angle_WhenSplitWithIntStep_CanSplit)
+BOOST_AUTO_TEST_CASE(Given45Angle_WhenSplitWithIntStep_ThenCanSplit)
 {
     IntPoint start(0, 0);
     IntPoint end(-10, 10);
@@ -57,7 +59,7 @@ BOOST_AUTO_TEST_CASE(Given45Angle_WhenSplitWithIntStep_CanSplit)
     }
 }
 
-BOOST_AUTO_TEST_CASE(Given45Angle_WhenSplitWithHighLoD_CanSplit)
+BOOST_AUTO_TEST_CASE(Given45Angle_WhenSplitWithHighLoD_ThenCanSplit)
 {
     LineGridSplitter splitter;
     IntPoint start(0, 0);
@@ -73,7 +75,7 @@ BOOST_AUTO_TEST_CASE(Given45Angle_WhenSplitWithHighLoD_CanSplit)
 }
 
 // These tests are for some bugs observed for real data
-BOOST_AUTO_TEST_CASE(GivenSpecificCase1_WhenSplit_CanSplit)
+BOOST_AUTO_TEST_CASE(GivenSpecificCase1_WhenSplit_ThenCanSplit)
 {
     LineGridSplitter splitter;
     splitter.setParams(1E8, 3);
@@ -90,7 +92,7 @@ BOOST_AUTO_TEST_CASE(GivenSpecificCase1_WhenSplit_CanSplit)
 }
 
 // These tests are for some bugs observed for real data
-BOOST_AUTO_TEST_CASE(GivenSpecificCase2_WhenSplit_CanSplit)
+BOOST_AUTO_TEST_CASE(GivenSpecificCase2_WhenSplit_ThenCanSplit)
 {
     LineGridSplitter splitter;
     splitter.setParams(1E7, 3);
@@ -103,7 +105,7 @@ BOOST_AUTO_TEST_CASE(GivenSpecificCase2_WhenSplit_CanSplit)
     BOOST_CHECK_EQUAL(result.size(), 4);
 }
 
-BOOST_AUTO_TEST_CASE(GivenSpecificCase3_WhenSplit_DoNotInflateDuplicates)
+BOOST_AUTO_TEST_CASE(GivenSpecificCase3_WhenSplit_ThenDoNotInflateDuplicates)
 {
     LineGridSplitter splitter;
     splitter.setParams(10000000, 0.0006103515625);

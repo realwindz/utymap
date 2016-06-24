@@ -9,23 +9,27 @@
 
 using namespace utymap::formats;
 
-struct Formats_Osm_Pbf_OsmPbfParserFixture
-{
-    Formats_Osm_Pbf_OsmPbfParserFixture() :
-        istream(TEST_PBF_FILE, std::ios::binary)
-    {
-    }
+namespace {
 
-    ~Formats_Osm_Pbf_OsmPbfParserFixture()
+    struct Formats_Osm_Pbf_OsmPbfParserFixture
     {
-        // In app, it should be called in class destructor which uses parser.
-        google::protobuf::ShutdownProtobufLibrary();
-    }
+        Formats_Osm_Pbf_OsmPbfParserFixture() :
+            istream(TEST_PBF_FILE, std::ios::binary)
+        {
+        }
 
-    OsmPbfParser<TestOsmDataVisitor> parser;
-    TestOsmDataVisitor visitor;
-    std::ifstream istream;
-};
+        ~Formats_Osm_Pbf_OsmPbfParserFixture()
+        {
+            // In app, it should be called in class destructor which uses parser.
+            google::protobuf::ShutdownProtobufLibrary();
+        }
+
+        OsmPbfParser<TestOsmDataVisitor> parser;
+        TestOsmDataVisitor visitor;
+        std::ifstream istream;
+    };
+
+}
 
 BOOST_FIXTURE_TEST_SUITE(Formats_Osm_Pbf_PbfParser, Formats_Osm_Pbf_OsmPbfParserFixture)
 

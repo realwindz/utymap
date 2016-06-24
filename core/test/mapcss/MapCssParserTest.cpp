@@ -7,36 +7,38 @@
 
 using namespace utymap::mapcss;
 
-typedef std::string::const_iterator StringIterator;
+namespace {
+    typedef std::string::const_iterator StringIterator;
 
-struct MapCss_MapCssParserFixture {
-    MapCss_MapCssParserFixture() : 
-        stylesheet(), 
-        styleSheetGrammar("", stylesheet)
-    { 
-    }
+    struct MapCss_MapCssParserFixture {
+        MapCss_MapCssParserFixture() :
+            stylesheet(),
+            styleSheetGrammar("", stylesheet)
+        {
+        }
 
-    // parsed data
-    StyleSheet stylesheet;
-    Condition condition;
-    Zoom zoom;
-    Selector selector;
-    Declaration declaration;
-    Rule rule;
-    // grammars
-    CommentSkipper<StringIterator> skipper;
-    StyleSheetGrammar<StringIterator> styleSheetGrammar;
-    ConditionGrammar<StringIterator> conditionGrammar;
-    ZoomGrammar<StringIterator> zoomGrammar;
-    SelectorGrammar<StringIterator> selectorGrammar;
-    DeclarationGrammar<StringIterator> declarationGrammar;
-    RuleGrammar<StringIterator> ruleGrammar;
-};
+        // parsed data
+        StyleSheet stylesheet;
+        Condition condition;
+        Zoom zoom;
+        Selector selector;
+        Declaration declaration;
+        Rule rule;
+        // grammars
+        CommentSkipper<StringIterator> skipper;
+        StyleSheetGrammar<StringIterator> styleSheetGrammar;
+        ConditionGrammar<StringIterator> conditionGrammar;
+        ZoomGrammar<StringIterator> zoomGrammar;
+        SelectorGrammar<StringIterator> selectorGrammar;
+        DeclarationGrammar<StringIterator> declarationGrammar;
+        RuleGrammar<StringIterator> ruleGrammar;
+    };
+}
 
-BOOST_FIXTURE_TEST_SUITE( MapCss_MapCssParser, MapCss_MapCssParserFixture )
+BOOST_FIXTURE_TEST_SUITE(MapCss_MapCssParser, MapCss_MapCssParserFixture)
 
 /* Comment */
-BOOST_AUTO_TEST_CASE( GivenCppComment_WhenParse_ThenDoesNotBreak )
+BOOST_AUTO_TEST_CASE(GivenCppComment_WhenParse_ThenDoesNotBreak)
 {
     std::string str = "/* Some \nncomment */\n way|z1-15[highway] {key:value;}";
 
@@ -46,7 +48,7 @@ BOOST_AUTO_TEST_CASE( GivenCppComment_WhenParse_ThenDoesNotBreak )
     BOOST_CHECK_EQUAL(stylesheet.rules.size(), 1);
 }
 
-BOOST_AUTO_TEST_CASE( GivenHtmlComment_WhenParse_ThenDoesNotBreak )
+BOOST_AUTO_TEST_CASE(GivenHtmlComment_WhenParse_ThenDoesNotBreak)
 {
     std::string str = "<!--Some \ncomment-->\n way|z1-15[highway] {key:value;}";
 
@@ -57,7 +59,7 @@ BOOST_AUTO_TEST_CASE( GivenHtmlComment_WhenParse_ThenDoesNotBreak )
 }
 
 /* Condition */
-BOOST_AUTO_TEST_CASE( GivenExistenceCondition_WhenParse_ThenOnlyKeyIsSet )
+BOOST_AUTO_TEST_CASE(GivenExistenceCondition_WhenParse_ThenOnlyKeyIsSet)
 {
     std::string str = "[highway]";
 
@@ -69,7 +71,7 @@ BOOST_AUTO_TEST_CASE( GivenExistenceCondition_WhenParse_ThenOnlyKeyIsSet )
     BOOST_CHECK(condition.value.empty());
 }
 
-BOOST_AUTO_TEST_CASE( GivenEqualCondition_WhenParse_ThenKeyOpValueAreSet )
+BOOST_AUTO_TEST_CASE(GivenEqualCondition_WhenParse_ThenKeyOpValueAreSet)
 {
     std::string str = "[highway=primary]";
 
@@ -81,7 +83,7 @@ BOOST_AUTO_TEST_CASE( GivenEqualCondition_WhenParse_ThenKeyOpValueAreSet )
     BOOST_CHECK_EQUAL(condition.value, "primary");
 }
 
-BOOST_AUTO_TEST_CASE( GivenNegativeCondition_WhenParse_ThenKeyOpValueAreSet )
+BOOST_AUTO_TEST_CASE(GivenNegativeCondition_WhenParse_ThenKeyOpValueAreSet)
 {
     std::string str = "[highway!=primary]";
 
@@ -94,7 +96,7 @@ BOOST_AUTO_TEST_CASE( GivenNegativeCondition_WhenParse_ThenKeyOpValueAreSet )
 }
 
 /* Zoom */
-BOOST_AUTO_TEST_CASE( GivenOneZoom_WhenParse_ThenStartAndEndAreSet )
+BOOST_AUTO_TEST_CASE(GivenOneZoom_WhenParse_ThenStartAndEndAreSet)
 {
     std::string str = "|z1";
 
@@ -105,7 +107,7 @@ BOOST_AUTO_TEST_CASE( GivenOneZoom_WhenParse_ThenStartAndEndAreSet )
     BOOST_CHECK_EQUAL(zoom.end, 1);
 }
 
-BOOST_AUTO_TEST_CASE( GivenZoomRange_WhenParse_ThenStartAndEndAreSet )
+BOOST_AUTO_TEST_CASE(GivenZoomRange_WhenParse_ThenStartAndEndAreSet)
 {
     std::string str = "|z12-21";
 
@@ -117,7 +119,7 @@ BOOST_AUTO_TEST_CASE( GivenZoomRange_WhenParse_ThenStartAndEndAreSet )
 }
 
 /* Selector */
-BOOST_AUTO_TEST_CASE( GivenSingleSelector_WhenParse_ThenNameAndConditionsAreSet )
+BOOST_AUTO_TEST_CASE(GivenSingleSelector_WhenParse_ThenNameAndConditionsAreSet)
 {
     std::string str = "way|z1[highway]";
 
@@ -130,7 +132,7 @@ BOOST_AUTO_TEST_CASE( GivenSingleSelector_WhenParse_ThenNameAndConditionsAreSet 
     BOOST_CHECK_EQUAL(selector.conditions[0].key, "highway");
 }
 
-BOOST_AUTO_TEST_CASE( GivenTwoSelectors_WhenParse_ThenNameAndConditionsAreSet )
+BOOST_AUTO_TEST_CASE(GivenTwoSelectors_WhenParse_ThenNameAndConditionsAreSet)
 {
     std::string str = "way|z1[highway][landuse]";
 
@@ -160,7 +162,7 @@ BOOST_AUTO_TEST_CASE(GivenTwoSelectorNames_WhenParse_ThenNamesAndConditionsAreSe
 }
 
 /* Declaration */
-BOOST_AUTO_TEST_CASE( GivenSingleDeclaraion_WhenParse_ThenKeyValueAreSet )
+BOOST_AUTO_TEST_CASE(GivenSingleDeclaraion_WhenParse_ThenKeyValueAreSet)
 {
     std::string str = "key1:value1;";
 
@@ -183,7 +185,7 @@ BOOST_AUTO_TEST_CASE(GivenGradientDeclaraion_WhenParse_ThenGradientValueIsCorrec
 }
 
 /* Rule */
-BOOST_AUTO_TEST_CASE( GivenSimpleRule_WhenParse_ThenSelectorAndDeclarationAreSet )
+BOOST_AUTO_TEST_CASE(GivenSimpleRule_WhenParse_ThenSelectorAndDeclarationAreSet)
 {
     std::string str = "way|z1[highway] {key1:value1;}";
 
@@ -197,7 +199,7 @@ BOOST_AUTO_TEST_CASE( GivenSimpleRule_WhenParse_ThenSelectorAndDeclarationAreSet
     BOOST_CHECK_EQUAL(rule.declarations[0].value,"value1");
 }
 
-BOOST_AUTO_TEST_CASE( GivenComplexRule_WhenParse_ThenSelectorAndDeclarationAreSet )
+BOOST_AUTO_TEST_CASE(GivenComplexRule_WhenParse_ThenSelectorAndDeclarationAreSet)
 {
     std::string str = "way|z1[highway],area|z2[landuse] { key1:value1; key2:value2; }";
 
@@ -219,7 +221,7 @@ BOOST_AUTO_TEST_CASE( GivenComplexRule_WhenParse_ThenSelectorAndDeclarationAreSe
 }
 
 /* StyleSheet */
-BOOST_AUTO_TEST_CASE( GivenFourRulesOnDifferentLines_WhenParse_ThenHasFourRules )
+BOOST_AUTO_TEST_CASE(GivenFourRulesOnDifferentLines_WhenParse_ThenHasFourRules)
 {
     std::string str =
         "way|z1[highway]  { key1:value1; }\n"
@@ -242,7 +244,7 @@ BOOST_AUTO_TEST_CASE(GivenImport_WhenParse_ThenStyleSheetIsImported)
     BOOST_CHECK(success);
 }
 
-BOOST_AUTO_TEST_CASE( GivenSimpleStyleSheet_WhenParserParse_ThenNoErrorsAndHasValidStyleSheet )
+BOOST_AUTO_TEST_CASE(GivenSimpleStyleSheet_WhenParserParse_ThenNoErrorsAndHasValidStyleSheet)
 {
     std::string str = "way|z1[highway]  { key1:value1; }\n";
     MapCssParser parser;

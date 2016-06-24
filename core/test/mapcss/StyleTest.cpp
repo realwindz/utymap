@@ -15,12 +15,11 @@ namespace {
     const std::string stylesheet = "way|z16[meters] { width: 10m; }"
                                    "way|z16[percent] { width: 10%; }"
                                    "way|z16[water] { width: -1m; }";
+    struct Utils_MapCssUtilsFixture
+    {
+        DependencyProvider dependencyProvider;
+    };
 }
-
-struct Utils_MapCssUtilsFixture
-{
-    DependencyProvider dependencyProvider;
-};
 
 BOOST_FIXTURE_TEST_SUITE(Utils_MapCssUtils, Utils_MapCssUtilsFixture)
 

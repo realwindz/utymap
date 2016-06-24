@@ -110,12 +110,8 @@ void ElementGeometryClipper::visitArea(const Area& area)
         return;
     }
 
-    // 2. all geometry outside : pass empty
+    // 2. all geometry outside: skip
     if (pointLocation == PointLocation::AllOutside) {
-        Area emptyArea;
-        emptyArea.id = area.id;
-        emptyArea.tags = area.tags;
-        callback_(emptyArea, quadKey_);
         return;
     }
 

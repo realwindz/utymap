@@ -36,8 +36,8 @@ namespace {
     };
 };
 
-TerraGenerator::TerraGenerator(const BuilderContext& context, const Style& style, ClipperEx& clipper) :
-        context_(context), mesh_(TerrainMeshName), style_(style), clipper_(clipper),
+TerraGenerator::TerraGenerator(const BuilderContext& context, const Style& style, ClipperEx& foregroundClipper) :
+context_(context), mesh_(TerrainMeshName), style_(style), foregroundClipper_(foregroundClipper), backGroundClipper_(),
         rect_(context.boundingBox.minPoint.longitude, 
               context.boundingBox.minPoint.latitude, 
               context.boundingBox.maxPoint.longitude, 
@@ -88,10 +88,10 @@ void TerraGenerator::buildLayers()
 // process the rest area.
 void TerraGenerator::buildBackground(Path& tileRect)
 {
-    clipper_.AddPath(tileRect, ptSubject, true);
+    backGroundClipper_.AddPath(tileRect, ptSubject, true);
     Paths background;
-    clipper_.Execute(ctDifference, background, pftPositive, pftPositive);
-    clipper_.Clear();
+    backGroundClipper_.Execute(ctDifference, background, pftNonZero, pftNonZero);
+    backGroundClipper_.Clear();
 
     if (!background.empty())
         populateMesh(background, createRegionContext(style_, ""));
@@ -119,17 +119,17 @@ void TerraGenerator::buildFromRegions(const Regions& regions, const RegionContex
         clipper.AddPaths(region.points, ptSubject, true);
 
     Paths result;
-    clipper.Execute(ctUnion, result, pftPositive, pftPositive);
+    clipper.Execute(ctUnion, result, pftNonZero, pftNonZero);
 
     buildFromPaths(result, regionContext);
 }
 
 void TerraGenerator::buildFromPaths(Paths& paths, const RegionContext& regionContext)
 {
-    clipper_.AddPaths(paths, ptSubject, true);
+    foregroundClipper_.AddPaths(paths, ptSubject, true);
     paths.clear();
-    clipper_.Execute(ctDifference, paths, pftPositive, pftPositive);
-    clipper_.moveSubjectToClip();
+    foregroundClipper_.Execute(ctDifference, paths, pftNonZero, pftNonZero);
+    foregroundClipper_.moveSubjectToClip();
 
     populateMesh(paths, regionContext);
 }
@@ -151,6 +151,8 @@ void TerraGenerator::populateMesh(Paths& paths, const RegionContext& regionConte
         bool isHole = area < 0;
         if (std::abs(area) < AreaTolerance)
             continue;
+
+        backGroundClipper_.AddPath(path, ptClip, true);
 
         Points points = restorePoints(path);
         if (isHole)

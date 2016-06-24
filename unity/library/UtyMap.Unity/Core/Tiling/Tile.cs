@@ -26,6 +26,12 @@ namespace UtyMap.Unity.Core.Tiling
         /// <summary> Sets game object which holds all children objects. </summary>
         public GameObject GameObject { get; set; }
 
+        /// <summary> Stores element ids loaded in this tile. </summary>
+        private readonly SafeHashSet<long> _localIds = new SafeHashSet<long>();
+
+        /// <summary> Stores element ids loaded for all tiles. </summary>
+        private static readonly SafeHashSet<long> GlobalIds = new SafeHashSet<long>();
+
         /// <summary> Creates <see cref="Tile"/>. </summary>
         /// <param name="quadKey"></param>
         /// <param name="stylesheet"></param>
@@ -55,5 +61,33 @@ namespace UtyMap.Unity.Core.Tiling
         {
             return String.Format("({0},{1}:{2})", QuadKey.TileX, QuadKey.TileY, QuadKey);
         }
+
+        /// <summary> Checks whether element with specific id is registered. </summary>
+        /// <param name="id">Element id.</param>
+        /// <returns>True if registration is found.</returns>
+        public bool Has(long id)
+        {
+            return GlobalIds.Contains(id);
+        }
+
+        /// <summary> Register element with given id inside to prevent multiple loading. </summary>
+        public void Register(long id)
+        {
+            _localIds.Add(id);
+            GlobalIds.Add(id);
+        }
+
+        #region IDisposable implementation
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            // remove all registered ids from global list if they are in current registry
+            foreach (var id in _localIds)
+                GlobalIds.Remove(id);
+            _localIds.Clear();
+        }
+
+        #endregion
     }
 }

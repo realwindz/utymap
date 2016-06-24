@@ -48,7 +48,6 @@ add_executable(${TEST}
         entities/ElementTest.cpp
         formats/shape/ShapeParserTest.cpp
         formats/shape/ShapeDataVisitorTest.cpp
-        formats/osm/BuildingProcessorTest.cpp
         formats/osm/MultipolygonProcessorTest.cpp
         formats/osm/pbf/OsmPbfParserTest.cpp
         formats/osm/xml/OsmXmlParserTest.cpp

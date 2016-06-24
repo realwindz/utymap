@@ -233,12 +233,12 @@ private:
     {
         switch (rel.types(index)) {
         case OSMPBF::Relation::NODE:
-            return "node";
+            return "n";
         case OSMPBF::Relation::WAY:
-            return "way";
+            return "w";
         case OSMPBF::Relation::RELATION:
         default:
-            return "relation";
+            return "r";
         }
     }
 

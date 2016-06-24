@@ -123,10 +123,10 @@ private:
             if (child.first == "member")
             {
                 RelationMember member;
-                const ptree & attributes = child.second.get_child("<xmlattr>");
+                const ptree& attributes = child.second.get_child("<xmlattr>");
 
                 member.refId = attributes.get_child("ref").get_value<uint64_t>();
-                member.type = attributes.get_child("type").get_value<std::string>();
+                member.type = getType(attributes);
                 member.role = attributes.get_child("role").get_value<std::string>();
                 members.push_back(member);
             }
@@ -134,6 +134,17 @@ private:
                 parseTag(child, tags);
         }
         visitor.visitRelation(id, members, tags);
+    }
+
+    inline std::string getType(const ptree& attributes)
+    {
+        auto type = attributes.get_child("type").get_value<std::string>();
+        if (type == "node")
+            return "n";
+        if (type == "way")
+            return "w";
+
+        return "r";
     }
 };
 

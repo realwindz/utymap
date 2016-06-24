@@ -14,21 +14,21 @@ using namespace utymap::mapcss;
 
 namespace {
     const std::string stylesheet = "way|z1-16[test=Foo] { key:val; }";
-}
 
-struct Formats_Shape_ShapeDataVisitorFixture
-{
-    Formats_Shape_ShapeDataVisitorFixture() :
-        shapeFile(TEST_SHAPE_LINE_FILE),
-        dependencyProvider(),
-        elementStore(*dependencyProvider.getStringTable())
+    struct Formats_Shape_ShapeDataVisitorFixture
     {
-    }
+        Formats_Shape_ShapeDataVisitorFixture() :
+            shapeFile(TEST_SHAPE_LINE_FILE),
+            dependencyProvider(),
+            elementStore(*dependencyProvider.getStringTable())
+        {
+        }
 
-    std::string shapeFile;
-    DependencyProvider dependencyProvider;
-    InMemoryElementStore elementStore;
-};
+        std::string shapeFile;
+        DependencyProvider dependencyProvider;
+        InMemoryElementStore elementStore;
+    };
+}
 
 BOOST_FIXTURE_TEST_SUITE(Formats_Shape_ShapeDataVisitor, Formats_Shape_ShapeDataVisitorFixture)
 

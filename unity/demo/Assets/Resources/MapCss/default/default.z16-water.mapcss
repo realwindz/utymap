@@ -9,7 +9,8 @@ canvas|z16 {
 area,relation|z16[natural=water],
 area,relation|z16[landuse=basin],
 area,relation|z16[waterway=riverbank],
-area,relation|z16[waterway=dock] {
+area,relation|z16[waterway=dock],
+area,relation|z16[leisure=swimming_pool] {
     clip:true;
     builders: terrain;
     terrain-layer: water;

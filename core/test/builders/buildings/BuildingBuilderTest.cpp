@@ -29,16 +29,15 @@ namespace {
                                    "relation|z1[type=multipolygon] {"
                                         "multipolygon: true;"
                                     "};";
+    struct Builders_Buildings_BuildingsBuilderFixture
+    {
+        DependencyProvider dependencyProvider;
+    };
 }
-
-struct Builders_Buildings_BuildingsBuilderFixture
-{
-    DependencyProvider dependencyProvider;
-};
 
 BOOST_FIXTURE_TEST_SUITE(Builders_Buildings_BuildingsBuilder, Builders_Buildings_BuildingsBuilderFixture)
 
-BOOST_AUTO_TEST_CASE(GivenRectangle_WhenBuilds_ThenBuildsMesh)
+BOOST_AUTO_TEST_CASE(GivenRectangleArea_WhenVisitArea_ThenMeshIsBuilt)
 {
     QuadKey quadKey(1, 1, 0);
     bool isCalled = false;
@@ -60,7 +59,7 @@ BOOST_AUTO_TEST_CASE(GivenRectangle_WhenBuilds_ThenBuildsMesh)
     BOOST_CHECK(isCalled);
 }
 
-BOOST_AUTO_TEST_CASE(GivenRelationWithHole_WhenBuilds_ThenBuildsMesh)
+BOOST_AUTO_TEST_CASE(GivenRelationWithHole_WhenVisitRelation_ThenMeshIsBuilt)
 {
     QuadKey quadKey(1, 1, 0);
     bool isCalled = false;

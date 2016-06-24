@@ -12,14 +12,16 @@ using namespace utymap::entities;
 using namespace utymap::index;
 using namespace utymap::mapcss;
 
-struct Mapcss_StyleDeclarationFixture
-{
-    DependencyProvider dependencyProvider;
-};
+namespace {
+    struct MapCss_StyleDeclarationFixture
+    {
+        DependencyProvider dependencyProvider;
+    };
+}
 
-BOOST_FIXTURE_TEST_SUITE(Mapcss_StyleDeclaration, Mapcss_StyleDeclarationFixture)
+BOOST_FIXTURE_TEST_SUITE(MapCss_StyleDeclaration, MapCss_StyleDeclarationFixture)
 
-BOOST_AUTO_TEST_CASE(GivenOnlySingleTag_WhenDoubleEvaluate_Return)
+BOOST_AUTO_TEST_CASE(GivenOnlySingleTag_WhenDoubleEvaluate_ThenReturnValue)
 {
     StyleDeclaration styleDeclaration(0, "eval(\"tag('height')\")");
 
@@ -30,7 +32,7 @@ BOOST_AUTO_TEST_CASE(GivenOnlySingleTag_WhenDoubleEvaluate_Return)
     BOOST_CHECK_EQUAL(result, 2.5);
 }
 
-BOOST_AUTO_TEST_CASE(GiveTwoTags_WhenDoubleEvaluate_ReturnValue)
+BOOST_AUTO_TEST_CASE(GiveTwoTags_WhenDoubleEvaluate_ThenReturnValue)
 {
     StyleDeclaration styleDeclaration(0, "eval(\"tag('building:height') - tag('roof:height')\")");
 
@@ -41,7 +43,7 @@ BOOST_AUTO_TEST_CASE(GiveTwoTags_WhenDoubleEvaluate_ReturnValue)
     BOOST_CHECK_EQUAL(result, 7.5);
 }
 
-BOOST_AUTO_TEST_CASE(GiveOneTagOneNumber_WhenDoubleEvaluate_ReturnValue)
+BOOST_AUTO_TEST_CASE(GiveOneTagOneNumber_WhenDoubleEvaluate_ThenReturnValue)
 {
     StyleDeclaration styleDeclaration(0, "eval(\"tag('building:levels') * 3\")");
 
@@ -52,7 +54,7 @@ BOOST_AUTO_TEST_CASE(GiveOneTagOneNumber_WhenDoubleEvaluate_ReturnValue)
     BOOST_CHECK_EQUAL(result, 15);
 }
 
-BOOST_AUTO_TEST_CASE(GiveRawValue_WhenDoubleEvaluate_ThrowsException)
+BOOST_AUTO_TEST_CASE(GiveRawValue_WhenDoubleEvaluate_ThenThrowsException)
 {
     StyleDeclaration styleDeclaration(0, "13");
 
@@ -61,7 +63,7 @@ BOOST_AUTO_TEST_CASE(GiveRawValue_WhenDoubleEvaluate_ThrowsException)
     utymap::MapCssException);
 }
 
-BOOST_AUTO_TEST_CASE(GiveOneTagOneNumber_WhenStringvaluate_ReturnValue)
+BOOST_AUTO_TEST_CASE(GiveOneTagOneNumber_WhenStringEvaluate_ThenReturnValue)
 {
     StyleDeclaration styleDeclaration(0, "eval(\"tag('color')\")");
 

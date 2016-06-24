@@ -9,7 +9,6 @@
 #include <boost/test/unit_test.hpp>
 #include "test_utils/DependencyProvider.hpp"
 
-#include <cstdio>
 #include <functional>
 
 using namespace utymap;
@@ -17,65 +16,68 @@ using namespace utymap::entities;
 using namespace utymap::formats;
 using namespace utymap::index;
 
-struct Formats_Osm_MultipolygonProcessorFixture
-{
-    Formats_Osm_MultipolygonProcessorFixture()
+namespace {
+
+    struct Formats_Osm_MultipolygonProcessorFixture
+    {
+        Formats_Osm_MultipolygonProcessorFixture()
             : dependencyProvider(), context()
-    {
-    }
-
-    std::shared_ptr<Relation> createRelation()
-    {
-        auto relation = std::make_shared<Relation>();
-        relation->id = 0;
-        context.relationMap[0] = relation;
-        return relation;
-    }
-
-    RelationMembers createRelationMembers(const std::initializer_list<std::tuple<std::uint64_t, std::string, std::string>>& membersInfo)
-    {
-        RelationMembers members;
-        members.reserve(membersInfo.size());
-        for (const auto& info : membersInfo) {
-            members.push_back(RelationMember{ std::get<0>(info), std::get<1>(info), std::get<2>(info) });
+        {
         }
-        return std::move(members);
-    }
 
-    void resolve(Relation& relation)
-    {
-    }
+        std::shared_ptr<Relation> createRelation()
+        {
+            auto relation = std::make_shared<Relation>();
+            relation->id = 0;
+            context.relationMap[0] = relation;
+            return relation;
+        }
 
-    std::vector<GeoCoordinate> ensureExpectedOrientation(std::vector<GeoCoordinate> source, bool isOuter = true)
-    {
-        std::vector<GeoCoordinate> destination;
-        destination.reserve(source.size());
-        bool isClockwise = utymap::utils::isClockwise(source);
-        if ((isClockwise && isOuter) || (!isClockwise && !isOuter))
-            destination.insert(destination.end(), source.begin(), source.end());
-        else
-            destination.insert(destination.end(), source.rbegin(), source.rend());
+        RelationMembers createRelationMembers(const std::initializer_list<std::tuple<std::uint64_t, std::string, std::string>>& membersInfo)
+        {
+            RelationMembers members;
+            members.reserve(membersInfo.size());
+            for (const auto& info : membersInfo) {
+                members.push_back(RelationMember{ std::get<0>(info), std::get<1>(info), std::get<2>(info) });
+            }
+            return std::move(members);
+        }
 
-        return std::move(destination);
-    }
+        void resolve(Relation& relation)
+        {
+        }
 
-    template<typename T>
-    std::shared_ptr<T> createElement(std::initializer_list<std::pair<double, double>> geometry)
-    {
-        return std::make_shared<T>(ElementUtils::createElement<T>(*dependencyProvider.getStringTable(), {}, geometry));
-    }
+        std::vector<GeoCoordinate> ensureExpectedOrientation(std::vector<GeoCoordinate> source, bool isOuter = true)
+        {
+            std::vector<GeoCoordinate> destination;
+            destination.reserve(source.size());
+            bool isClockwise = utymap::utils::isClockwise(source);
+            if ((isClockwise && isOuter) || (!isClockwise && !isOuter))
+                destination.insert(destination.end(), source.begin(), source.end());
+            else
+                destination.insert(destination.end(), source.rbegin(), source.rend());
 
-    DependencyProvider dependencyProvider;
-    OsmDataContext context;
-};
+            return std::move(destination);
+        }
+
+        template<typename T>
+        std::shared_ptr<T> createElement(std::initializer_list<std::pair<double, double>> geometry)
+        {
+            return std::make_shared<T>(ElementUtils::createElement<T>(*dependencyProvider.getStringTable(), {}, geometry));
+        }
+
+        DependencyProvider dependencyProvider;
+        OsmDataContext context;
+    };
+}
 
 BOOST_FIXTURE_TEST_SUITE(Formats_Osm_MultipolygonProcessor, Formats_Osm_MultipolygonProcessorFixture)
 
 BOOST_AUTO_TEST_CASE(GivenOneOuterOneInnerAllClosed_WhenProcess_ThenReturnCorrectResult)
 {
     RelationMembers relationMembers = createRelationMembers({
-        std::make_tuple(1, "way", "outer"),
-        std::make_tuple(2, "way", "inner")
+        std::make_tuple(1, "w", "outer"),
+        std::make_tuple(2, "w", "inner")
     });
     context.areaMap[1] = createElement<Area>({ { 0, 0 }, { 3, 5 }, { 7, 3 }, { 8, -1 }, { 3, -4 }, { 0, 0 } });
     context.areaMap[2] = createElement<Area>({ { 2, 0 }, { 3, 2 }, { 5, 1 }, { 4, -1 }, { 2, 0 } });
@@ -99,9 +101,9 @@ BOOST_AUTO_TEST_CASE(GivenOneOuterOneInnerAllClosed_WhenProcess_ThenReturnCorrec
 BOOST_AUTO_TEST_CASE(GivenOneOuterTwoInnerAllClosed_WhenProcess_ThenReturnCorrectResult)
 {
     RelationMembers relationMembers = createRelationMembers({
-        std::make_tuple(1, "way", "outer"),
-        std::make_tuple(2, "way", "inner"),
-        std::make_tuple(3, "way", "inner"),
+        std::make_tuple(1, "w", "outer"),
+        std::make_tuple(2, "w", "inner"),
+        std::make_tuple(3, "w", "inner"),
     });
     context.areaMap[1] = createElement<Area>({ { 0, 0 }, { 3, 5 }, { 7, 3 }, { 8, -1 }, { 3, -4 }, { 0, 0 } });
     context.areaMap[2] = createElement<Area>({ { 2, 1 }, { 3, 3 }, { 5, 2 }, { 4, 0 }, { 2, 1 } });
@@ -130,8 +132,8 @@ BOOST_AUTO_TEST_CASE(GivenOneOuterTwoInnerAllClosed_WhenProcess_ThenReturnCorrec
 BOOST_AUTO_TEST_CASE(GivenOneOuterNonClosed_WhenProcess_ThenReturnCorrectResult)
 {
     RelationMembers relationMembers = createRelationMembers({
-        std::make_tuple(1, "way", "outer"),
-        std::make_tuple(2, "way", "outer")
+        std::make_tuple(1, "w", "outer"),
+        std::make_tuple(2, "w", "outer")
     });
     context.wayMap[1] = createElement<Way>({ { 0, 0 }, { 3, 5 }, { 7, 3 } });
     context.wayMap[2] = createElement<Way>({ { 7, 3 }, { 8, -1 }, { 3, -4 }, { 0, 0 } });
@@ -151,8 +153,8 @@ BOOST_AUTO_TEST_CASE(GivenOneOuterNonClosed_WhenProcess_ThenReturnCorrectResult)
 BOOST_AUTO_TEST_CASE(GivenTwoOuterClosed_WhenProcess_ThenReturnCorrectResult)
 {
     RelationMembers relationMembers = createRelationMembers({
-        std::make_tuple(1, "way", "outer"),
-        std::make_tuple(2, "way", "outer")
+        std::make_tuple(1, "w", "outer"),
+        std::make_tuple(2, "w", "outer")
     });
     context.areaMap[1] = createElement<Area>({ { 0, 0 }, { 3, 5 }, { 7, 3 }, { 8, -1 }, { 3, -4 }, { 0, 0 } });
     context.areaMap[2] = createElement<Area>({ { 10, -3 }, { 14, -3 }, { 14, -6 }, { 10, -6 }, { 10, -3 } });
@@ -172,10 +174,10 @@ BOOST_AUTO_TEST_CASE(GivenTwoOuterClosed_WhenProcess_ThenReturnCorrectResult)
 BOOST_AUTO_TEST_CASE(GivenOneOuterNonClosedAndTwoInnerClosed_WhenProcess_ThenReturnCorrectResult)
 {
     RelationMembers relationMembers = createRelationMembers({
-        std::make_tuple(1, "way", "outer"),
-        std::make_tuple(2, "way", "outer"),
-        std::make_tuple(3, "way", "inner"),
-        std::make_tuple(4, "way", "inner")
+        std::make_tuple(1, "w", "outer"),
+        std::make_tuple(2, "w", "outer"),
+        std::make_tuple(3, "w", "inner"),
+        std::make_tuple(4, "w", "inner")
     });
     context.wayMap[1] = createElement<Way>({ { 0, 0 }, { 3, 5 }, { 7, 3 } });
     context.wayMap[2] = createElement<Way>({ { 7, 3 }, { 8, -1 }, { 3, -4 }, { 0, 0 } });
@@ -208,30 +210,30 @@ BOOST_AUTO_TEST_CASE(GivenMultiplyOuterAndMultiplyInner_WhenProcess_ThenReturnCo
     // see fig.6 http://wiki.openstreetmap.org/wiki/Talk:Relation:multipolygon
 
     RelationMembers relationMembers = createRelationMembers({
-        std::make_tuple(1, "way", "outer"),
-        std::make_tuple(2, "way", "outer"),
-        std::make_tuple(3, "way", "outer"),
-        std::make_tuple(4, "way", "outer"),
+        std::make_tuple(1, "w", "outer"),
+        std::make_tuple(2, "w", "outer"),
+        std::make_tuple(3, "w", "outer"),
+        std::make_tuple(4, "w", "outer"),
 
-        std::make_tuple(5, "way", "inner"),
-        std::make_tuple(6, "way", "inner"),
-        std::make_tuple(7, "way", "inner"),
-        std::make_tuple(8, "way", "inner"),
-        std::make_tuple(9, "way", "inner"),
-        std::make_tuple(10, "way", "inner"),
-        std::make_tuple(11, "way", "inner"),
+        std::make_tuple(5, "w", "inner"),
+        std::make_tuple(6, "w", "inner"),
+        std::make_tuple(7, "w", "inner"),
+        std::make_tuple(8, "w", "inner"),
+        std::make_tuple(9, "w", "inner"),
+        std::make_tuple(10, "w", "inner"),
+        std::make_tuple(11, "w", "inner"),
 
-        std::make_tuple(12, "way", "outer"),
-        std::make_tuple(13, "way", "outer"),
-        std::make_tuple(14, "way", "outer"),
-        std::make_tuple(15, "way", "outer"),
+        std::make_tuple(12, "w", "outer"),
+        std::make_tuple(13, "w", "outer"),
+        std::make_tuple(14, "w", "outer"),
+        std::make_tuple(15, "w", "outer"),
 
-        std::make_tuple(16, "way", "inner"),
-        std::make_tuple(17, "way", "inner"),
-        std::make_tuple(18, "way", "inner"),
-        std::make_tuple(19, "way", "inner"),
+        std::make_tuple(16, "w", "inner"),
+        std::make_tuple(17, "w", "inner"),
+        std::make_tuple(18, "w", "inner"),
+        std::make_tuple(19, "w", "inner"),
 
-        std::make_tuple(20, "way", "outer")
+        std::make_tuple(20, "w", "outer")
     });
     context.wayMap[1] = createElement<Way>({ { 1, 5 }, { 8, 4 } });
     context.wayMap[2] = createElement<Way>({ { 8, 4 }, { 9, -1 } });
@@ -270,10 +272,10 @@ BOOST_AUTO_TEST_CASE(GivenMultiplyOuterAndMultiplyInner_WhenProcess_ThenReturnCo
 BOOST_AUTO_TEST_CASE(GivenSpecificFourOuter_WhenProcess_ThenDoesNotCrash)
 {
     RelationMembers relationMembers = createRelationMembers({
-        std::make_tuple(1, "way", "outer"),
-        std::make_tuple(2, "way", "outer"),
-        std::make_tuple(3, "way", "outer"),
-        std::make_tuple(4, "way", "outer")
+        std::make_tuple(1, "w", "outer"),
+        std::make_tuple(2, "w", "outer"),
+        std::make_tuple(3, "w", "outer"),
+        std::make_tuple(4, "w", "outer")
     });
     context.wayMap[1] = createElement<Way>({ { 55.754873400000001, 37.620234000000004 }, { 55.754922700000002, 37.620224499999999 } });
     context.wayMap[2] = createElement<Way>({ { 55.754873400000001, 37.620234000000004 }, { 55.754846999999998, 37.620192099999997 } });

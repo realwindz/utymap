@@ -7,13 +7,15 @@
 using namespace utymap::formats;
 using namespace utymap::index;
 
-const double Precision = 0.1e-7;
+namespace {
+    const double Precision = 0.1e-7;
 
-struct Formats_Shape_ShapeParserFixture
-{
-    ShapeParser<TestShapeDataVisitor> parser;
-    TestShapeDataVisitor visitor;
-};
+    struct Formats_Shape_ShapeParserFixture
+    {
+        ShapeParser<TestShapeDataVisitor> parser;
+        TestShapeDataVisitor visitor;
+    };
+}
 
 BOOST_FIXTURE_TEST_SUITE(Formats_ShapeParser, Formats_Shape_ShapeParserFixture)
 

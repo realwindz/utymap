@@ -7,11 +7,13 @@
 using namespace utymap;
 using namespace utymap::utils;
 
-BOOST_AUTO_TEST_SUITE(Index_GeoUtils)
+namespace {
+    const double Precision = 0.1e-7;
+    const double TestLatitude = 52.53171;
+    const double TestLongitude = 13.38730;
+}
 
-const double Precision = 0.1e-7;
-const double TestLatitude = 52.53171;
-const double TestLongitude = 13.38730;
+BOOST_AUTO_TEST_SUITE(Utils_GeoUtils)
 
 BOOST_AUTO_TEST_CASE( GivenTestLocationAtFirstLod_WhenGetQuadKey_ThenReturnValidQuadKey )
 {

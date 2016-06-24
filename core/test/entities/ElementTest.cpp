@@ -5,29 +5,33 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <cstdio>
+#include "test_utils/DependencyProvider.hpp"
+#include "test_utils/ElementUtils.hpp"
 
 using namespace utymap::entities;
 
-class Counter: public ElementVisitor
-{
-public:
-    int nodes;
-    int ways;
-    int areas;
-    int relations;
+namespace {
+    struct Counter : public ElementVisitor
+    {
+        int nodes, ways, areas, relations;
 
-    Counter(): nodes(0), ways(0), areas(0), relations(0) {}
+        Counter() : nodes(0), ways(0), areas(0), relations(0) {}
 
-    void visitNode(const Node&) { nodes++; }
-    void visitWay(const Way&) { ways++; }
-    void visitArea(const Area&) { areas++; }
-    void visitRelation(const Relation&) { relations++; }
-};
+        void visitNode(const Node&) { nodes++; }
+        void visitWay(const Way&) { ways++; }
+        void visitArea(const Area&) { areas++; }
+        void visitRelation(const Relation&) { relations++; }
+    };
 
-BOOST_AUTO_TEST_SUITE(Entities_Element)
+    struct Entities_ElementFixture
+    {
+        DependencyProvider dependencyProvider;
+    };
+}
 
-BOOST_AUTO_TEST_CASE(GivenNode_Visit_IncrementsCounter)
+BOOST_FIXTURE_TEST_SUITE(Entities_Element, Entities_ElementFixture)
+
+BOOST_AUTO_TEST_CASE(GivenNode_WhenVisit_ThenIncrementsCounter)
 {
     Counter counter;
     Node node;
@@ -40,31 +44,18 @@ BOOST_AUTO_TEST_CASE(GivenNode_Visit_IncrementsCounter)
     BOOST_CHECK_EQUAL(counter.relations, 0);
 }
 
-BOOST_AUTO_TEST_CASE(GivenNodeWithTwoTags_ToString_ReturnsValidRepresentation)
+BOOST_AUTO_TEST_CASE(GivenNodeWithTwoTags_WhenToString_ThenReturnsValidRepresentation)
 {
-    {
-        // arrange
-        utymap::index::StringTable st("");
-        std::vector<Tag> tags;
-        tags.push_back(Tag(st.getId("key1"), st.getId("value1")));
-        tags.push_back(Tag(st.getId("key2"), st.getId("value2")));
-        Node node;
-        node.id = 1;
-        node.tags = tags;
+    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 
+    { {"key1", "value1"}, {"key2", "value2"} });
+    node.id = 1;
 
-        // act
-        std::string result = node.toString(st);
+    std::string result = node.toString(*dependencyProvider.getStringTable());
 
-        // assert
-        BOOST_CHECK_EQUAL(result, "[1]{key1:value1,key2:value2,}");
-    }
-
-    // cleanup
-    std::remove("string.idx");
-    std::remove("string.dat");
+    BOOST_CHECK_EQUAL(result, "[1]{key1:value1,key2:value2,}");
 }
 
-BOOST_AUTO_TEST_CASE(GivenWay_Visit_IncrementsCounter)
+BOOST_AUTO_TEST_CASE(GivenWay_WhenVisit_ThenIncrementsCounter)
 {
     Counter counter;
     Way way;
@@ -77,7 +68,7 @@ BOOST_AUTO_TEST_CASE(GivenWay_Visit_IncrementsCounter)
     BOOST_CHECK_EQUAL(counter.relations, 0);
 }
 
-BOOST_AUTO_TEST_CASE(GivenArea_Visit_IncrementsCounter)
+BOOST_AUTO_TEST_CASE(GivenArea_WhenVisit_ThenIncrementsCounter)
 {
     Counter counter;
     Area area;
@@ -90,7 +81,7 @@ BOOST_AUTO_TEST_CASE(GivenArea_Visit_IncrementsCounter)
     BOOST_CHECK_EQUAL(counter.relations, 0);
 }
 
-BOOST_AUTO_TEST_CASE(GivenRelation_Visit_IncrementsCounter)
+BOOST_AUTO_TEST_CASE(GivenRelation_WhenVisit_ThenIncrementsCounter)
 {
     Counter counter;
     Relation relation;

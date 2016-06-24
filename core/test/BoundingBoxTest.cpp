@@ -4,10 +4,12 @@
 
 using namespace utymap;
 
-BOOST_AUTO_TEST_SUITE(BoundingBox_Suite)
+namespace {
+    const double Precision = 0.1e-7;
+    const BoundingBox bbox(GeoCoordinate(0, 0), GeoCoordinate(10, 10));
+}
 
-const double Precision = 0.1e-7;
-const BoundingBox bbox(GeoCoordinate(0, 0), GeoCoordinate(10, 10));
+BOOST_AUTO_TEST_SUITE(BoundingBox_Suite)
 
 BOOST_AUTO_TEST_CASE(GivenInnerBoundingBox_WhenContains_ThenReturnTrue)
 {

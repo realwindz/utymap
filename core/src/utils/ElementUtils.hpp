@@ -90,12 +90,12 @@ static void visitRelationMembers(const utymap::formats::OsmDataContext& context,
                                  T& visitor)
 {
     for (const auto& member : members) {
-        if (member.type == "node") {
+        if (member.type == "n") {
             auto nodePair = context.nodeMap.find(member.refId);
             if (nodePair != context.nodeMap.end())
                 visitor.visit(nodePair);
         }
-        else if (member.type == "way") {
+        else if (member.type == "w") {
             auto areaPair = context.areaMap.find(member.refId);
             if (areaPair != context.areaMap.end()) {
                 visitor.visit(areaPair);

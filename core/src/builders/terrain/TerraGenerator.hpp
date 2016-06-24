@@ -45,7 +45,7 @@ public:
 
     TerraGenerator(const BuilderContext& context,
                    const utymap::mapcss::Style& style,
-                   ClipperLib::ClipperEx& clipper);
+                   ClipperLib::ClipperEx& foregroundClipper_);
 
     // Adds region
     void addRegion(const std::string& type, const Region& region);
@@ -87,7 +87,8 @@ private:
 
     const BuilderContext& context_;
     const utymap::mapcss::Style& style_;
-    ClipperLib::ClipperEx& clipper_;
+    ClipperLib::ClipperEx& foregroundClipper_;
+    ClipperLib::ClipperEx backGroundClipper_;
     LineGridSplitter splitter_;
     utymap::meshing::Mesh mesh_;
     Layers layers_;
