@@ -11,6 +11,7 @@
 #include "utils/CoreUtils.hpp"
 
 #include <set>
+#include <map>
 #include <memory>
 
 using namespace utymap::entities;
@@ -146,7 +147,7 @@ public:
 
 private:
     StringTable& stringTable_;
-    std::unordered_map<std::string, std::shared_ptr<ElementStore>> storeMap_;
+    std::map<std::string, std::shared_ptr<ElementStore>> storeMap_;
 
     FormatType getFormatTypeFromPath(const std::string& path)
     {

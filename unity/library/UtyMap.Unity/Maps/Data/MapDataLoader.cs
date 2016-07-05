@@ -95,12 +95,10 @@ namespace UtyMap.Unity.Maps.Data
             _cachePath = configSection.GetString(@"data/cache", null);
 
             var stringPath = _pathResolver.Resolve(configSection.GetString("data/index/strings"));
-            var dataPath = _pathResolver.Resolve(configSection.GetString("data/index/spatial"));
-
             var elePath = _pathResolver.Resolve(configSection.GetString("data/elevation/local"));
 
             string errorMsg = null;
-            CoreLibrary.Configure(stringPath, dataPath, elePath, error => errorMsg = error);
+            CoreLibrary.Configure(stringPath, elePath, error => errorMsg = error);
             if (errorMsg != null)
                 throw new MapDataException(errorMsg);
         }

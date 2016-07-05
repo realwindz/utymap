@@ -35,22 +35,17 @@
 // Exposes API for external usage.
 class Application
 {
-    const std::string InMemoryStorageKey = "InMemory";
-    const std::string PersistentStorageKey = "OnDisk";
     const int SrtmElevationLodStart = 42; // NOTE: disable for initial MVP
 
 public:
-    // Composes object graph.
-    Application(const char* stringPath, const char* dataPath, const char* elePath, OnError* errorCallback) :
-        stringTable_(stringPath), geoStore_(stringTable_), srtmEleProvider_(elePath), flatEleProvider_(),
-        quadKeyBuilder_(geoStore_, stringTable_)
-    {
-        geoStore_.registerStore(InMemoryStorageKey, 
-            std::make_shared<utymap::index::InMemoryElementStore>(stringTable_));
-        
-        geoStore_.registerStore(PersistentStorageKey, 
-            std::make_shared<utymap::index::PersistentElementStore>(dataPath, stringTable_));
 
+    // Composes object graph.
+    Application(const char* stringPath, 
+                const char* elePath, 
+                OnError* errorCallback) :
+        stringTable_(stringPath), geoStore_(stringTable_), srtmEleProvider_(elePath),
+        flatEleProvider_(), quadKeyBuilder_(geoStore_, stringTable_)
+    {
         registerDefaultBuilders();
     }
 
@@ -60,54 +55,70 @@ public:
         getStyleProvider(path);
     }
 
+    void registerInMemoryStore(const char* key)
+    {
+        geoStore_.registerStore(key,
+            std::make_shared<utymap::index::InMemoryElementStore>(stringTable_));
+    }
+
+    void registerPersistentStore(const char* key, const char* dataPath)
+    {
+        geoStore_.registerStore(key,
+            std::make_shared<utymap::index::PersistentElementStore>(dataPath, stringTable_));
+    }
+
     // Preload elevation data. Not thread safe.
     void preloadElevation(const utymap::QuadKey& quadKey)
     {
         getElevationProvider(quadKey).preload(utymap::utils::GeoUtils::quadKeyToBoundingBox(quadKey));
     }
 
-    // Adds data to in-memory store.
-    void addToPersistentStore(const char* styleFile, const char* path, const utymap::QuadKey& quadKey, OnError* errorCallback)
-    {
-    }
-
-    // Adds data to persistent store.
-    void addToPersistentStore(const char* styleFile, const char* path, const utymap::LodRange& range, OnError* errorCallback)
+    // Adds data to store.
+    void addToStore(const char* key, 
+                    const char* styleFile, 
+                    const char* path, 
+                    const utymap::QuadKey& quadKey, 
+                    OnError* errorCallback)
     {
         safeExecute([&]() {
-            geoStore_.add(PersistentStorageKey, path, range, *getStyleProvider(styleFile).get());
+            geoStore_.add(key, path, quadKey, *getStyleProvider(styleFile).get());
         }, errorCallback);
     }
 
-    // Adds data to in-memory store.
-    void addToInMemoryStore(const char* styleFile, const char* path, const utymap::QuadKey& quadKey, OnError* errorCallback)
+    // Adds data to store.
+    void addToStore(const char* key, 
+                    const char* styleFile, 
+                    const char* path, 
+                    const utymap::BoundingBox& bbox, 
+                    const utymap::LodRange& range, 
+                    OnError* errorCallback)
     {
         safeExecute([&]() {
-            geoStore_.add(InMemoryStorageKey, path, quadKey, *getStyleProvider(styleFile).get());
+            geoStore_.add(key, path, bbox, range, *getStyleProvider(styleFile).get());
         }, errorCallback);
     }
 
-    // Adds data to in-memory store.
-    void addToInMemoryStore(const char* styleFile, const char* path, const utymap::BoundingBox& bbox, const utymap::LodRange& range, OnError* errorCallback)
+    // Adds data to store.
+    void addToStore(const char* key, 
+                    const char* styleFile, 
+                    const char* path, 
+                    const utymap::LodRange& range, 
+                    OnError* errorCallback)
     {
         safeExecute([&]() {
-            geoStore_.add(InMemoryStorageKey, path, bbox, range, *getStyleProvider(styleFile).get());
-        }, errorCallback);
-    }
-
-    // Adds data to in-memory store.
-    void addToInMemoryStore(const char* styleFile, const char* path, const utymap::LodRange& range, OnError* errorCallback)
-    {
-        safeExecute([&]() {
-            geoStore_.add(InMemoryStorageKey, path, range, *getStyleProvider(styleFile).get());
+            geoStore_.add(key, path, range, *getStyleProvider(styleFile).get());
         }, errorCallback);
     }
 
     // Adds element to in-memory store.
-    void addInMemoryStore(const char* styleFile, const utymap::entities::Element& element, const utymap::LodRange& range, OnError* errorCallback)
+    void addToStore(const char* key,
+                    const char* styleFile, 
+                    const utymap::entities::Element& element, 
+                    const utymap::LodRange& range, 
+                    OnError* errorCallback)
     {
         safeExecute([&]() {
-            geoStore_.add(InMemoryStorageKey, element, range, *getStyleProvider(styleFile).get());
+            geoStore_.add(key, element, range, *getStyleProvider(styleFile).get());
         }, errorCallback);
     }
 
@@ -117,8 +128,11 @@ public:
     }
 
     // Loads quadKey.
-    void loadQuadKey(const char* styleFile, const utymap::QuadKey& quadKey, OnMeshBuilt* meshCallback,
-                     OnElementLoaded* elementCallback, OnError* errorCallback)
+    void loadQuadKey(const char* styleFile, 
+                     const utymap::QuadKey& quadKey, 
+                     OnMeshBuilt* meshCallback,
+                     OnElementLoaded* elementCallback, 
+                     OnError* errorCallback)
     {
         safeExecute([&]() {
             utymap::mapcss::StyleProvider& styleProvider = *getStyleProvider(styleFile);
@@ -146,7 +160,8 @@ public:
 
 private:
 
-    void safeExecute(const std::function<void()>& action, OnError* errorCallback)
+    void safeExecute(const std::function<void()>& action, 
+                     OnError* errorCallback)
     {
         try {
             action();

@@ -9,14 +9,16 @@ namespace UtyMap.Unity.Maps
     /// <summary> Provides the way to build tile encapsulating Utymap implementation. </summary>
     internal static class CoreLibrary
     {
+        private const string InMemoryStore = "InMemory";
+
         /// <summary> Configure utymap. Should be called first. </summary>
         /// <param name="stringPath"> Path to string table. </param>
-        /// <param name="dataPath"> Path to map data. </param>
         /// <param name="elePath"> Path to elevation data. </param>
         /// <param name="onError"> OnError callback. </param>
-        public static void Configure(string stringPath, string dataPath, string elePath, OnError onError)
+        public static void Configure(string stringPath, string elePath, OnError onError)
         {
-            configure(stringPath, dataPath, elePath, onError);
+            configure(stringPath, elePath, onError);
+            registerInMemoryStore(InMemoryStore);
         }
 
         /// <summary> Preloads elevation data for given quadkey. </summary>
@@ -36,7 +38,7 @@ namespace UtyMap.Unity.Maps
         /// <param name="onError"> OnError callback. </param>
         public static void AddToInMemoryStore(string stylePath, string path, Range<int> levelOfDetails, OnError onError)
         {
-            addToInMemoryStoreInRange(stylePath, path, levelOfDetails.Minimum, levelOfDetails.Maximum, onError);
+            addToStoreInRange(InMemoryStore, stylePath, path, levelOfDetails.Minimum, levelOfDetails.Maximum, onError);
         }
 
         /// <summary>
@@ -49,7 +51,7 @@ namespace UtyMap.Unity.Maps
         /// <param name="onError"> OnError callback. </param>
         public static void AddToInMemoryStore(string stylePath, string path, QuadKey quadKey, OnError onError)
         {
-            addToInMemoryStoreInQuadKey(stylePath, path, quadKey.TileX, quadKey.TileY, quadKey.LevelOfDetail, onError);
+            addToStoreInQuadKey(InMemoryStore, stylePath, path, quadKey.TileX, quadKey.TileY, quadKey.LevelOfDetail, onError);
         }
 
         public static void AddElementToInMemoryStore(string stylePath, Element element, Range<int> levelOfDetails, OnError onError)
@@ -69,9 +71,10 @@ namespace UtyMap.Unity.Maps
                 tags[i*2 + 1] = element.Tags[tagKeys[i]];
             }
 
-            addElementToInMemoryStore(stylePath, element.Id,
+            addToStoreElement(InMemoryStore, stylePath, element.Id,
                 coordinates, coordinates.Length,
-                tags, tags.Length, levelOfDetails.Minimum, levelOfDetails.Maximum, onError);
+                tags, tags.Length, 
+                levelOfDetails.Minimum, levelOfDetails.Maximum, onError);
         }
 
         /// <summary> Checks whether there is data for given quadkey. </summary>
@@ -118,20 +121,20 @@ namespace UtyMap.Unity.Maps
         internal delegate void OnError([In] string message);
 
         [DllImport("UtyMap.Shared", CallingConvention = CallingConvention.StdCall)]
-        private static extern void configure(string stringPath, string dataPath, string elePath, OnError errorHandler);
+        private static extern void configure(string stringPath, string elePath, OnError errorHandler);
 
         [DllImport("UtyMap.Shared", CallingConvention = CallingConvention.StdCall)]
-        private static extern void addToInMemoryStoreInRange(string stylePath, string path, int startLod, int endLod,
-            OnError errorHandler);
+        private static extern void registerInMemoryStore(string stringPath);
 
         [DllImport("UtyMap.Shared", CallingConvention = CallingConvention.StdCall)]
-        private static extern void addToInMemoryStoreInQuadKey(string stylePath, string path, int tileX, int tileY, int lod, 
-            OnError errorHandler);
+        private static extern void addToStoreInRange(string key, string stylePath, string path, int startLod, int endLod, OnError errorHandler);
 
         [DllImport("UtyMap.Shared", CallingConvention = CallingConvention.StdCall)]
-        private static extern void addElementToInMemoryStore(string stylePath, long id, 
-            double[] vertices, int vertexLength, string[] tags, int tagLength, 
-            int startLod, int endLod, OnError errorHandler);
+        private static extern void addToStoreInQuadKey(string key, string stylePath, string path, int tileX, int tileY, int lod, OnError errorHandler);
+
+        [DllImport("UtyMap.Shared", CallingConvention = CallingConvention.StdCall)]
+        private static extern void addToStoreElement(string key, string stylePath, long id, double[] vertices, int vertexLength, 
+            string[] tags, int tagLength, int startLod, int endLod, OnError errorHandler);
 
         [DllImport("UtyMap.Shared", CallingConvention = CallingConvention.StdCall)]
         private static extern bool hasData(int tileX, int tileY, int levelOfDetails);

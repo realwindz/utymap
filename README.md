@@ -2,13 +2,7 @@
 [![Join the chat at https://gitter.im/reinterpretcat/utymap](https://badges.gitter.im/reinterpretcat/utymap.svg)](https://gitter.im/reinterpretcat/utymap?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 <h2> Description </h2>
 
-UtyMap is library for building real city environment dynamically using various data sources (mostly, OpenStreetMap and Natural Earth). It includes:
-* rendering of different models (e.g. buildings, roads, parks, rivers, POI, etc.) using map data for given location on the fly by terrain tiling approach and different zoom levels
-* easy customization of rendered models using mapcss file
-* non-flat terrain with Data Elevation Model (SRTM) files
-* modification of city environment (terrain craters, corrupt buildings, etc..)[**planned**]
-
-The library can be used to build different 3D-games (like car simulations or GTA 2/3 ) or some map tools. Target platforms are planned as all popular mobile OS and VR devices supported by Unity3D.
+UtyMap is a library which provides highly customizable API for procedural world generation based on real map data, e.g. OpenStreetMap, NaturalEarth. Core logic is written on C++11 and can be used on many platforms as it has no dependency to specific game engine or application framework. 
 
 <h2> Project structure </h2>
 Project consists of two sub-projects:
@@ -20,15 +14,5 @@ Project consists of two sub-projects:
 <h2> Project status </h2>
 <p> Project is under development, more details will be given later. </p>
 
-<h2> Install </h2>
-Core library has some dependencies. The following versions are used in development environment:
-<ul>
-    <li> <b>CMake 3.1 or higher.  </b> Some specific flags (CMAKE_CXX_STANDARD, POSITION_INDEPENDENT_CODE) are used. </li>
-    <li> <b>Boost 1.55 or higher. </b> Boost is used only for parsing mapcss, xml deserialization and unit testing.  </li>
-    <li> <b> Protobuf library and compiler 2.6.1 or other compatible. </b> Protobuf is used for parsing osm pbf files.</li>
-    <li> <b> zlib 1.2.8 or other compatible. </b> Used for osm pbf files decompression. </li>
-</ul>
-
-OS specific instructions can be found here:
-* [Linux](https://github.com/reinterpretcat/utymap/wiki/Install-on-Linux)
-* [Windows](https://github.com/reinterpretcat/utymap/wiki/Install-on-windows)
+<h2> Documentation </h2>
+[Wiki](https://github.com/reinterpretcat/utymap/wiki)

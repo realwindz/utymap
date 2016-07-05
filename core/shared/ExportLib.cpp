@@ -14,11 +14,10 @@ extern "C"
 {
     // Composes object graph.
     void EXPORT_API configure(const char* stringPath,  // path to string table directory
-                              const char* dataPath,    // path to index directory
                               const char* elePath,     // path to elevation directory
                               OnError* errorCallback)  // completion callback.
     {
-        applicationPtr = new Application(stringPath, dataPath, elePath, errorCallback);
+        applicationPtr = new Application(stringPath, elePath, errorCallback);
     }
 
     // Performs cleanup.
@@ -41,64 +40,69 @@ extern "C"
         applicationPtr->preloadElevation(utymap::QuadKey(levelOfDetail, tileX, tileY));
     }
 
-    // Adds data to persistent store.
-    void EXPORT_API addToPersistentStore(const char* styleFile,   // style file
-                                         const char* path,        // path to data
-                                         int startLod,            // start zoom level
-                                         int endLod,              // end zoom level
-                                         OnError* errorCallback)  // completion callback
+    // Registers new in-memory store.
+    void EXPORT_API registerInMemoryStore(const char* key)
     {
-        applicationPtr->addToPersistentStore(styleFile, path, utymap::LodRange(startLod, endLod), errorCallback);
+        applicationPtr->registerInMemoryStore(key);
     }
 
-    // Adds data to in-memory store to specific level of details range.
-    void EXPORT_API addToInMemoryStoreInRange(const char* styleFile,     // style file
-                                              const char* path,          // path to data
-                                              int startLod,              // start zoom level
-                                              int endLod,                // end zoom level
-                                              OnError* errorCallback)    // completion callback
+    // Registers new persistent store.
+    void EXPORT_API registerPersistentStore(const char* key, const char* dataPath)
+    {
+        applicationPtr->registerPersistentStore(key, dataPath);
+    }
+
+    // Adds data to store to specific level of details range.
+    void EXPORT_API addToStoreInRange(const char* key,           // store key
+                                      const char* styleFile,     // style file
+                                      const char* path,          // path to data
+                                      int startLod,              // start zoom level
+                                      int endLod,                // end zoom level
+                                      OnError* errorCallback)    // completion callback
    {
-        applicationPtr->addToInMemoryStore(styleFile, path, utymap::LodRange(startLod, endLod), errorCallback);
+        applicationPtr->addToStore(key, styleFile, path, utymap::LodRange(startLod, endLod), errorCallback);
    }
 
-    // Adds data to in-memory store to specific level of details range.
-    void EXPORT_API addToInMemoryStoreInBoundingBox(const char* styleFile,     // style file
-                                                    const char* path,          // path to data
-                                                    double minLat,             // minimal latitude
-                                                    double minLon,             // minimal longitude
-                                                    double maxLat,             // maximal latitude
-                                                    double maxLon,             // maximal longitude
-                                                    int startLod,              // start zoom level
-                                                    int endLod,                // end zoom level
-                                                    OnError* errorCallback)    // completion callback
+    // Adds data to store to specific level of details range.
+    void EXPORT_API addToStoreInBoundingBox(const char* key,           // store key
+                                            const char* styleFile,     // style file
+                                            const char* path,          // path to data
+                                            double minLat,             // minimal latitude
+                                            double minLon,             // minimal longitude
+                                            double maxLat,             // maximal latitude
+                                            double maxLon,             // maximal longitude
+                                            int startLod,              // start zoom level
+                                            int endLod,                // end zoom level
+                                            OnError* errorCallback)    // completion callback
     {
         utymap::BoundingBox bbox(utymap::GeoCoordinate(minLat, minLon), utymap::GeoCoordinate(maxLat,maxLon));
         utymap::LodRange lod(startLod, endLod);
-        applicationPtr->addToInMemoryStore(styleFile, path, bbox, lod, errorCallback);
+        applicationPtr->addToStore(key, styleFile, path, bbox, lod, errorCallback);
     }
 
-    // Adds data to in-memory store to specific quadkey only.
-    void EXPORT_API addToInMemoryStoreInQuadKey(const char* styleFile,     // style file
-                                                const char* path,          // path to data
-                                                int tileX,                 // tile x
-                                                int tileY,                 // tile y
-                                                int levelOfDetail,         // level of detail
-                                                OnError* errorCallback)    // completion callback
+    // Adds data to store to specific quadkey only.
+    void EXPORT_API addToStoreInQuadKey(const char* key,           // store key
+                                        const char* styleFile,     // style file
+                                        const char* path,          // path to data
+                                        int tileX,                 // tile x
+                                        int tileY,                 // tile y
+                                        int levelOfDetail,         // level of detail
+                                        OnError* errorCallback)    // completion callback
     {
-        applicationPtr->addToInMemoryStore(styleFile, path, utymap::QuadKey(levelOfDetail, tileX, tileY), errorCallback);
+        applicationPtr->addToStore(key, styleFile, path, utymap::QuadKey(levelOfDetail, tileX, tileY), errorCallback);
     }
 
-
-    // Adds element to in-memory store. NOTE: relation is not supported yet.
-    void EXPORT_API addElementToInMemoryStore(const char* styleFile,     // style file
-                                              std::uint64_t id,          // element id
-                                              const double* vertices,    // vertex array
-                                              int vertexLength,          // vertex array length,
-                                              const char** tags,          // tag array
-                                              int tagLength,             // tag array length
-                                              int startLod,              // start zoom level
-                                              int endLod,                // end zoom level
-                                              OnError* errorCallback)    // completion callback
+    // Adds element to store. NOTE: relation is not yet supported.
+    void EXPORT_API addToStoreElement(const char* key,           // store key
+                                      const char* styleFile,     // style file
+                                      std::uint64_t id,          // element id
+                                      const double* vertices,    // vertex array
+                                      int vertexLength,          // vertex array length,
+                                      const char** tags,          // tag array
+                                      int tagLength,             // tag array length
+                                      int startLod,              // start zoom level
+                                      int endLod,                // end zoom level
+                                      OnError* errorCallback)    // completion callback
     {
         utymap::LodRange lod(startLod, endLod);
         std::vector<utymap::entities::Tag> elementTags;
@@ -115,7 +119,7 @@ extern "C"
             node.id = id;
             node.tags = elementTags;
             node.coordinate = utymap::GeoCoordinate(vertices[0], vertices[1]);
-            applicationPtr->addInMemoryStore(styleFile, node, lod, errorCallback);
+            applicationPtr->addToStore(key, styleFile, node, lod, errorCallback);
             return;
         }
 
@@ -131,13 +135,13 @@ extern "C"
             area.id = id;
             area.coordinates = coordinates;
             area.tags = elementTags;
-            applicationPtr->addInMemoryStore(styleFile, area, lod, errorCallback);
+            applicationPtr->addToStore(key, styleFile, area, lod, errorCallback);
         } else {
             utymap::entities::Way way;
             way.id = id;
             way.coordinates = coordinates;
             way.tags = elementTags;
-            applicationPtr->addInMemoryStore(styleFile, way, lod, errorCallback);
+            applicationPtr->addToStore(key, styleFile, way, lod, errorCallback);
         }
     }
 

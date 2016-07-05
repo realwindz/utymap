@@ -6,17 +6,17 @@ mono:
  - latest
 compiler:
     - gcc
-#    - clang
+    - clang
 install:
     - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
-#    - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.7" CC="clang-3.7"; fi
+    - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.7" CC="clang-3.7"; fi
 addons:
     apt:
         sources:
             - kalakris-cmake
             - george-edison55-precise-backports # cmake 3.x
             - ubuntu-toolchain-r-test
-#            - llvm-toolchain-precise-3.7
+            - llvm-toolchain-precise-3.7
             - boost-latest
         packages:
             - cmake
@@ -27,7 +27,7 @@ addons:
             - libboost1.55-all-dev
             - gcc-4.9
             - g++-4.9
-#            - clang-3.7
+            - clang-3.7
             - mono-complete
             - nunit-console
 before_script:
