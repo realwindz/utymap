@@ -3,25 +3,20 @@
 
 #include <cstdio>
 #include <fstream>
+#include <memory>
+#include <mutex>
 #include <unordered_map>
 #include <vector>
 
 using std::ios;
 using namespace utymap::index;
 
+// Naive implementation of string table: reads all the time string from file; acquires lock
+// TODO optimize it to avoid locks and expensive file reads.
 class StringTable::StringTableImpl
 {
     typedef std::vector<std::uint32_t> IdList;
     typedef std::unordered_map<std::uint32_t, IdList> HashIdMap;
-
-    std::fstream indexFile_;
-    std::fstream dataFile_;
-    std::uint32_t seed_;
-    std::uint32_t nextId_;
-
-    // TODO think about better data structure alternative
-    HashIdMap map_;
-    std::vector<std::uint32_t> offsets_;
 
 public:
     StringTableImpl(const std::string& indexPath, const std::string& dataPath, std::uint32_t seed) :
@@ -33,13 +28,11 @@ public:
         offsets_()
     {
         nextId_ = static_cast<std::uint32_t>(indexFile_.tellg() / (sizeof(std::uint32_t) * 2));
-        if (nextId_ > 0)
-        {
+        if (nextId_ > 0) {
             int32_t count = nextId_;
             offsets_.reserve(count);
             indexFile_.seekg(0, ios::beg);
-            for (int i = 0; i < count; ++i)
-            {
+            for (int i = 0; i < count; ++i) {
                 std::uint32_t hash, offset;
                 indexFile_.read(reinterpret_cast<char*>(&hash), sizeof(hash));
                 indexFile_.read(reinterpret_cast<char*>(&offset), sizeof(offset));
@@ -60,11 +53,11 @@ public:
         std::uint32_t hash;
         MurmurHash3_x86_32(str.c_str(), static_cast<int>(str.size()), seed_, &hash);
 
+        // TODO avoid lock there
+        std::lock_guard<std::mutex> lock(lock_);
         HashIdMap::iterator hashLookupResult = map_.find(hash);
-        if (hashLookupResult != map_.end())
-        {
-            for (std::uint32_t id : hashLookupResult->second)
-            {
+        if (hashLookupResult != map_.end()) {
+            for (std::uint32_t id : hashLookupResult->second) {
                 std::string data;
                 readString(id, data);
                 if (str == data)
@@ -79,6 +72,8 @@ public:
     std::string getString(std::uint32_t id)
     {
         std::string str;
+        // TODO avoid lock there
+        std::lock_guard<std::mutex> lock(lock_);
         readString(id, str);
         return str;
     }
@@ -90,8 +85,7 @@ private:
     // reads string by id.
     void readString(std::uint32_t id, std::string& data)
     {
-        if (id < offsets_.size())
-        {
+        if (id < offsets_.size()) {
             std::uint32_t offset = offsets_[id];
             std::string::size_type size = id + 1 < nextId_ ? offsets_[id] : 8;
             data.reserve(size);
@@ -120,6 +114,17 @@ private:
         map_[hash].push_back(nextId_);
         offsets_.push_back(offset);
     }
+
+    std::fstream indexFile_;
+    std::fstream dataFile_;
+    std::uint32_t seed_;
+    std::uint32_t nextId_;
+
+    // TODO think about better data structure alternatives
+    HashIdMap map_;
+    std::vector<std::uint32_t> offsets_;
+
+    std::mutex lock_;
 };
 
 StringTable::StringTable(const std::string& path) :

@@ -3,7 +3,7 @@
 
 #include "entities/Element.hpp"
 #include "index/StringTable.hpp"
-#include "utils/CompatibilityUtils.hpp"
+#include "utils/CoreUtils.hpp"
 #include "utils/ElementUtils.hpp"
 
 #include <boost/variant/recursive_variant.hpp>
@@ -102,7 +102,7 @@ private:
         double operator()(const std::string& tagKey) const
         {
             auto keyId = stringTable_.getId(tagKey);
-            return std::stod(utymap::utils::getTagValue(keyId, tags_, stringTable_));
+            return utymap::utils::parseDouble(utymap::utils::getTagValue(keyId, tags_, stringTable_));
         }
 
         double operator()(const Signed& s) const
@@ -149,7 +149,6 @@ private:
         }
     };
 
-    const std::uint32_t key_;
     std::shared_ptr<std::string> value_;
     std::shared_ptr<Tree> tree_;
 };

@@ -12,8 +12,7 @@ using namespace utymap::index;
 using namespace utymap::entities;
 using namespace utymap::mapcss;
 
-class InMemoryElementStore::InMemoryElementStoreImpl : public ElementVisitor
-{
+namespace {
     struct QuadKeyComparator
     {
         bool operator() (const QuadKey& lhs, const QuadKey& rhs) const
@@ -31,47 +30,58 @@ class InMemoryElementStore::InMemoryElementStoreImpl : public ElementVisitor
     typedef std::vector<std::shared_ptr<Element>> Elements;
     typedef std::map<QuadKey, Elements, QuadKeyComparator> ElementMap;
 
-public:
-
-    QuadKey currentQuadKey;
-
-    void visitNode(const utymap::entities::Node& node)
+    class ElementMapVisitor : public ElementVisitor
     {
-        elementsMap_[currentQuadKey].push_back(std::make_shared<Node>(node));
+    public:
+        ElementMapVisitor(const QuadKey& quadKey, ElementMap& elementsMap) :
+            quadKey_(quadKey), elementsMap_(elementsMap)
+        {
+        }
+
+        void visitNode(const utymap::entities::Node& node)
+        {
+            elementsMap_[quadKey_].push_back(std::make_shared<Node>(node));
+        }
+
+        void visitWay(const utymap::entities::Way& way)
+        {
+            elementsMap_[quadKey_].push_back(std::make_shared<Way>(way));
+        }
+
+        void visitArea(const utymap::entities::Area& area)
+        {
+            elementsMap_[quadKey_].push_back(std::make_shared<Area>(area));
+        }
+
+        void visitRelation(const utymap::entities::Relation& relation)
+        {
+            elementsMap_[quadKey_].push_back(std::make_shared<Relation>(relation));
+        }
+    private:
+        const QuadKey& quadKey_;
+        ElementMap& elementsMap_;
+    };
+}
+
+class InMemoryElementStore::InMemoryElementStoreImpl
+{
+ public:
+    ElementMap elementsMap;
+
+    inline ElementMap::const_iterator begin(const utymap::QuadKey& quadKey) const
+    {
+        return elementsMap.find(quadKey);
     }
 
-    void visitWay(const utymap::entities::Way& way)
+    inline ElementMap::const_iterator end() const
     {
-        elementsMap_[currentQuadKey].push_back(std::make_shared<Way>(way));
+        return elementsMap.cend();
     }
 
-    void visitArea(const utymap::entities::Area& area)
+    inline bool hasData(const utymap::QuadKey& quadKey) const
     {
-        elementsMap_[currentQuadKey].push_back(std::make_shared<Area>(area));
-    }
-
-    void visitRelation(const utymap::entities::Relation& relation)
-    {
-        elementsMap_[currentQuadKey].push_back(std::make_shared<Relation>(relation));
-    }
-
-    ElementMap::const_iterator begin()
-    {
-        return elementsMap_.find(currentQuadKey);
-    }
-
-    ElementMap::const_iterator end()
-    {
-        return elementsMap_.cend();
-    }
-
-    bool hasData(const utymap::QuadKey& quadKey) const
-    {
-        return elementsMap_.find(quadKey) != elementsMap_.end();
-    }
-
-private:
-    ElementMap elementsMap_;
+        return elementsMap.find(quadKey) != elementsMap.end();
+    }  
 };
 
 InMemoryElementStore::InMemoryElementStore(StringTable& stringTable) :
@@ -85,8 +95,8 @@ InMemoryElementStore::~InMemoryElementStore()
 
 void InMemoryElementStore::storeImpl(const utymap::entities::Element& element, const QuadKey& quadKey)
 {
-    pimpl_->currentQuadKey = quadKey;
-    element.accept(*pimpl_);
+    ElementMapVisitor visitor(quadKey, pimpl_->elementsMap);
+    element.accept(visitor);
 }
 
 bool InMemoryElementStore::hasData(const utymap::QuadKey& quadKey) const
@@ -94,17 +104,20 @@ bool InMemoryElementStore::hasData(const utymap::QuadKey& quadKey) const
     return pimpl_->hasData(quadKey);
 }
 
-void InMemoryElementStore::search(const utymap::QuadKey& quadKey, const StyleProvider& styleProvider, utymap::entities::ElementVisitor& visitor)
+void InMemoryElementStore::search(const utymap::QuadKey& quadKey, utymap::entities::ElementVisitor& visitor)
 {
-    pimpl_->currentQuadKey = quadKey;
-    auto it = pimpl_->begin();
+    auto it = pimpl_->begin(quadKey);
 
     // No elements for this quadkey
     if (it == pimpl_->end())
         return;
 
     for (const auto& element : it->second) {
-        if (styleProvider.hasStyle(*element, quadKey.levelOfDetail))
-            element->accept(visitor);
+        element->accept(visitor);
     }
+}
+
+void InMemoryElementStore::commit()
+{
+
 }

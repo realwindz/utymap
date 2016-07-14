@@ -11,7 +11,8 @@ set(SHARED_SOURCE ${PROJECT_SOURCE_DIR}/shared)
 # initialize boost
 find_package(Boost REQUIRED)
 IF (Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIR})
+    include_directories(${Boost_INCLUDE_DIRS})
+    link_directories(${Boost_LIBRARY_DIRS})
     add_definitions("-DHAS_BOOST")
 ENDIF()
 

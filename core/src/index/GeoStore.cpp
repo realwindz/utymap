@@ -25,7 +25,8 @@ class GeoStore::GeoStoreImpl
     class FilterElementVisitor : public ElementVisitor
     {
     public:
-        FilterElementVisitor(ElementVisitor& visitor) : visitor_(visitor)
+        FilterElementVisitor(const QuadKey& quadKey, const StyleProvider& styleProvider, ElementVisitor& visitor)
+                : visitor_(visitor), quadKey_(quadKey), styleProvider_(styleProvider), ids_()
         {
         }
 
@@ -40,14 +41,18 @@ class GeoStore::GeoStoreImpl
     private:
 
         inline void visitIfNecessary(const Element& element)
-        { 
-            if (element.id == 0 || ids_.find(element.id) == ids_.end()) {
+        {
+            if (element.id == 0 || ids_.find(element.id) == ids_.end() ||
+                    styleProvider_.hasStyle(element, quadKey_.levelOfDetail)) {
                 element.accept(visitor_);
                 ids_.insert(element.id);
             }
         }
 
+        const QuadKey& quadKey_;
+        const StyleProvider& styleProvider_;
         ElementVisitor& visitor_;
+
         std::set<std::uint64_t> ids_;
     };
 
@@ -65,7 +70,9 @@ public:
 
     void add(const std::string& storeKey, const Element& element, const LodRange& range, const StyleProvider& styleProvider)
     {
-        storeMap_[storeKey]->store(element, range, styleProvider);
+        auto elementStore = storeMap_[storeKey];
+        elementStore->store(element, range, styleProvider);
+        elementStore->commit();
     }
 
     void add(const std::string& storeKey, const std::string& path, const QuadKey& quadKey, const StyleProvider& styleProvider)
@@ -74,6 +81,7 @@ public:
         add(path, styleProvider, [&](Element& element) {
             return elementStore->store(element, quadKey, styleProvider);
         });
+        elementStore->commit();
     }
 
     void add(const std::string& storeKey, const std::string& path, const LodRange& range, const StyleProvider& styleProvider)
@@ -82,6 +90,7 @@ public:
         add(path, styleProvider, [&](Element& element) {
             return elementStore->store(element, range, styleProvider);
         });
+        elementStore->commit();
     }
 
     void add(const std::string& storeKey, const std::string& path, const BoundingBox& bbox, const LodRange& range, const StyleProvider& styleProvider)
@@ -90,6 +99,7 @@ public:
         add(path, styleProvider, [&](Element& element) {
             return elementStore->store(element, bbox, range, styleProvider);
         });
+        elementStore->commit();
     }
 
     void add(const std::string& path, const StyleProvider& styleProvider, std::function<bool(Element&)> functor)
@@ -125,9 +135,9 @@ public:
 
     void search(const QuadKey& quadKey, const utymap::mapcss::StyleProvider& styleProvider, ElementVisitor& visitor)
     {
-        FilterElementVisitor filter(visitor);
+        FilterElementVisitor filter(quadKey, styleProvider, visitor);
         for (const auto& pair : storeMap_) {
-            pair.second->search(quadKey, styleProvider, filter);
+            pair.second->search(quadKey, filter);
         }
     }
 

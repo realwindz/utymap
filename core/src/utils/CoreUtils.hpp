@@ -5,6 +5,8 @@
 #include <string>
 #include <sstream>
 
+#include <boost/lexical_cast.hpp>
+
 namespace utymap { namespace utils {
 
 template <typename T>
@@ -20,6 +22,16 @@ inline bool endsWith(std::string const & value, std::string const & ending)
     if (ending.size() > value.size()) 
         return false;
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
+
+inline double parseDouble(const std::string& value, double defaultValue = 0)
+{
+    try {
+        return boost::lexical_cast<double>(value);
+    }
+    catch (const boost::bad_lexical_cast&) {
+        return defaultValue;
+    }
 }
 
 template<typename TimeT = std::chrono::milliseconds>

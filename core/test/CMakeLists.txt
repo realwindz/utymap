@@ -1,4 +1,4 @@
-find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+find_package(Boost COMPONENTS unit_test_framework filesystem REQUIRED)
 
 enable_testing ()
 
@@ -54,6 +54,7 @@ add_executable(${TEST}
         heightmap/SrtmElevationProviderTest.cpp
         index/ElementStoreTest.cpp
         index/InMemoryElementStoreTest.cpp
+        index/PersistentElementStoreTest.cpp
         index/StringTableTest.cpp
         mapcss/MapCssParserTest.cpp
         mapcss/StyleDeclarationTest.cpp
@@ -67,7 +68,9 @@ add_executable(${TEST}
         ${HEADER_FILES}
         )
 
-target_link_libraries(${TEST} UtyMap ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(${TEST} UtyMap 
+                              ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+                              ${Boost_FILESYSTEM_LIBRARY})
 
 enable_testing ()
 add_test (${TEST} ${TEST})

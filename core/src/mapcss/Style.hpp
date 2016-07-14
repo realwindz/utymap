@@ -6,6 +6,7 @@
 #include "mapcss/StyleDeclaration.hpp"
 #include "index/StringTable.hpp"
 #include "utils/CompatibilityUtils.hpp"
+#include "utils/CoreUtils.hpp"
 #include "utils/GeoUtils.hpp"
 
 #include <cstdint>
@@ -95,21 +96,22 @@ struct Style
         auto rawValue = declaration->value();
         char dimen = (*rawValue)[rawValue->size() - 1];
 
-        // in meters
-        if (dimen == 'm' && coordinate.isValid()) {
-            double value = std::stod(rawValue->substr(0, rawValue->size() - 1));
-            return utymap::utils::GeoUtils::getOffset(coordinate, value);
+        if (dimen == 'm') {
+            double value = utymap::utils::parseDouble(rawValue->substr(0, rawValue->size() - 1));
+            return coordinate.isValid()
+                ? utymap::utils::GeoUtils::getOffset(coordinate, value)
+                : value;
         }
 
         // relative to size
         if (dimen == '%') {
-            double value = std::stod(rawValue->substr(0, rawValue->size() - 1));
+            double value = utymap::utils::parseDouble(rawValue->substr(0, rawValue->size() - 1));
             return size * value * 0.01;
         }
 
         return  declaration->isEval()
                 ? declaration->evaluate<double>(tags_, stringTable_)
-                : std::stod(*rawValue);
+                : utymap::utils::parseDouble(*rawValue);
     }
 
 private:

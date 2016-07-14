@@ -74,7 +74,15 @@ void OsmDataVisitor::visitWay(std::uint64_t id, std::vector<std::uint64_t>& node
     }
 
     if (coordinates.size() > 2 && isArea(tags)) {
-        coordinates.pop_back();
+        if (coordinates.at(0) == coordinates.at(coordinates.size() - 1)) {
+            // NOTE three coordinates are invalid here: skip.
+            // TODO should it be considered as way instead?
+            if (coordinates.size() == 3)
+                return;
+
+            coordinates.pop_back();
+        }
+
         auto area = std::make_shared<Area>();
         area->id = id;
         if (!utymap::utils::isClockwise(coordinates)) {

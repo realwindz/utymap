@@ -24,7 +24,6 @@ public:
 
     // Searches for elements for given quadKey
     virtual void search(const utymap::QuadKey& quadKey,
-                        const utymap::mapcss::StyleProvider& styleProvider,
                         utymap::entities::ElementVisitor& visitor) = 0;
 
     // Checks whether there is data for given quadkey.
@@ -45,6 +44,9 @@ public:
                const utymap::BoundingBox& bbox,
                const utymap::LodRange& range,
                const utymap::mapcss::StyleProvider& styleProvider);
+
+    // Commits changes done in element store.
+    virtual void commit() = 0;
 
 protected:
     // Stores element in given quadkey.

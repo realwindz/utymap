@@ -249,7 +249,12 @@ private:
         auto geoCoordinate = GeoCoordinate(polygon_->points[1], polygon_->points[0]);
 
         double height = style.getValue(HeightKey);
+        // NOTE do not allow height to be zero. This might happen due to the issues in input osm data.
+        if (height == 0)
+            height = 10;
+
         double minHeight = style.getValue(MinHeightKey);
+
         double elevation = context_.eleProvider.getElevation(geoCoordinate) + minHeight;
 
         height -= minHeight;

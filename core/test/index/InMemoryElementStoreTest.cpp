@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(GivenNodeWayArea_WhenSearch_ThenAllFound)
     QuadKey quadKey(1, 0, 0);
     ElementCounter counter;
 
-    elementStore.search(quadKey, *dependencyProvider.getStyleProvider(stylesheet), counter);
+    elementStore.search(quadKey, counter);
 
     BOOST_CHECK_EQUAL(counter.times, 3);
 }
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(GivenNodeWayArea_WhenSearch_ThenAllSkipped)
     QuadKey quadKey(2, 0, 0);
     ElementCounter counter;
 
-    elementStore.search(quadKey, *dependencyProvider.getStyleProvider(stylesheet), counter);
+    elementStore.search(quadKey, counter);
 
     BOOST_CHECK_EQUAL(counter.times, 0);
 }
