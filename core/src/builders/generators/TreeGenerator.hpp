@@ -57,14 +57,14 @@ public:
     }
 
     // Sets trunk color.
-    TreeGenerator& setTrunkColor(std::shared_ptr<const utymap::mapcss::ColorGradient> gradient, double noiseFreq)
+    TreeGenerator& setTrunkColor(std::shared_ptr<const utymap::mapcss::ColorGradient>& gradient, double noiseFreq)
     {
         trunkGenerator.setColor(gradient, noiseFreq);
         return *this;
     }
 
     // Sets foliage color.
-    TreeGenerator& setFoliageColor(std::shared_ptr<const utymap::mapcss::ColorGradient> gradient, double noiseFreq)
+    TreeGenerator& setFoliageColor(std::shared_ptr<const utymap::mapcss::ColorGradient>& gradient, double noiseFreq)
     {
         foliageGenerator.setColor(gradient, noiseFreq);
         return *this;

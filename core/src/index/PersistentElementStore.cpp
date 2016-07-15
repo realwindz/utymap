@@ -181,7 +181,6 @@ namespace {
             dataFile_.read(reinterpret_cast<char*>(&elementSize), sizeof(elementSize));
 
             for (std::uint16_t i = 0; i < elementSize; ++i) {
-                std::uint8_t elementType;
                 relation->elements.push_back(readElement());
             }
             return relation;

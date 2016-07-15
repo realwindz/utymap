@@ -81,8 +81,8 @@ double NoiseUtils::perlin2D(double x, double y, double frequency)
 
     Vector2 point(x * frequency, y* frequency);
 
-    int ix0 = std::floor(point.x);
-    int iy0 = std::floor(point.y);
+    int ix0 = static_cast<int>(std::floor(point.x));
+    int iy0 = static_cast<int>(std::floor(point.y));
     double tx0 = point.x - ix0;
     double ty0 = point.y - iy0;
     double tx1 = tx0 - 1;

@@ -63,7 +63,7 @@ public:
     {
     }
 
-    void registerStore(const std::string& storeKey, std::shared_ptr<ElementStore> store)
+    void registerStore(const std::string& storeKey, const std::shared_ptr<ElementStore>& store)
     {
         storeMap_[storeKey] = store;
     }
@@ -102,7 +102,7 @@ public:
         elementStore->commit();
     }
 
-    void add(const std::string& path, const StyleProvider& styleProvider, std::function<bool(Element&)> functor)
+    void add(const std::string& path, const StyleProvider& styleProvider, const std::function<bool(Element&)>& functor)
     {
         switch (getFormatTypeFromPath(path)) {
             case FormatType::Shape: {
@@ -180,7 +180,7 @@ GeoStore::~GeoStore()
     google::protobuf::ShutdownProtobufLibrary();
 }
 
-void utymap::index::GeoStore::registerStore(const std::string& storeKey, std::shared_ptr<ElementStore> store)
+void utymap::index::GeoStore::registerStore(const std::string& storeKey, const std::shared_ptr<ElementStore>& store)
 {
     pimpl_->registerStore(storeKey, store);
 }

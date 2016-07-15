@@ -5,7 +5,6 @@
 #include "entities/Element.hpp"
 #include "index/StringTable.hpp"
 #include "mapcss/StyleEvaluator.hpp"
-#include "utils/CompatibilityUtils.hpp"
 #include "utils/ElementUtils.hpp"
 
 #include <boost/variant/recursive_variant.hpp>

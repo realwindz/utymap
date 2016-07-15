@@ -56,7 +56,7 @@ private:
         std::vector<const char*> ctags;
         tagStrings_.reserve(element.tags.size() * 2);
         ctags.reserve(element.tags.size() * 2);
-        for (auto i = 0; i < element.tags.size(); ++i) {
+        for (std::size_t i = 0; i < element.tags.size(); ++i) {
             const utymap::entities::Tag& tag = element.tags[i];
             tagStrings_.push_back(stringTable_.getString(tag.key));
             tagStrings_.push_back(stringTable_.getString(tag.value));
@@ -66,7 +66,7 @@ private:
         // convert geometry
         std::vector<double> coords;
         coords.reserve(coordinates.size() * 2);
-        for (auto i = 0; i < coordinates.size(); ++i) {
+        for (std::size_t i = 0; i < coordinates.size(); ++i) {
             const utymap::GeoCoordinate coordinate = coordinates[i];
             coords.push_back(coordinate.longitude);
             coords.push_back(coordinate.latitude);

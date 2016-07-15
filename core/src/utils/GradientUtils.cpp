@@ -1,4 +1,3 @@
-#include "utils/CompatibilityUtils.hpp"
 #include "utils/GradientUtils.hpp"
 
 #include <sstream>

@@ -5,7 +5,6 @@
 #include "formats/FormatTypes.hpp"
 #include "formats/osm/OsmDataContext.hpp"
 #include "index/StringTable.hpp"
-#include "utils/CompatibilityUtils.hpp"
 
 #include <algorithm>
 #include <cstdint>

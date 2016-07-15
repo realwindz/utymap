@@ -114,7 +114,9 @@ struct LineLinear
         double WBC = B1*C2 - B2*C1;
         double WCA = C1*A2 - C2*A1;
 
-        return WAB == 0 ? Vector2() : Vector2(WBC / WAB, WCA / WAB);
+        return WAB == 0 
+            ? Vector2() 
+            : Vector2(WBC / WAB, WCA / WAB);
     }
 
     /// <summary> Check whether point belongs to line. </summary>

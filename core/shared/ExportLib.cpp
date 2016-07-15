@@ -107,7 +107,7 @@ extern "C"
         utymap::LodRange lod(startLod, endLod);
         std::vector<utymap::entities::Tag> elementTags;
         elementTags.reserve(tagLength / 2);
-        for (int i = 0; i < tagLength; i+=2) {
+        for (std::size_t i = 0; i < tagLength; i += 2) {
             auto keyId = applicationPtr->getStringId(tags[i]);
             auto valueId = applicationPtr->getStringId(tags[i + 1]);
             elementTags.push_back(utymap::entities::Tag(keyId, valueId));

@@ -36,7 +36,7 @@ public:
     }
 
     // Sets color
-    AbstractGenerator& setColor(std::shared_ptr<const utymap::mapcss::ColorGradient> gradient,
+    AbstractGenerator& setColor(std::shared_ptr<const utymap::mapcss::ColorGradient>& gradient,
                                 double noiseFreq)
     {
         options_.gradient = gradient;

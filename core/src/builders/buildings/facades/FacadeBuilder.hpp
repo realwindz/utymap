@@ -29,7 +29,7 @@ class FacadeBuilder
   inline FacadeBuilder& setMinHeight(double minHeight) { minHeight_ = minHeight; return *this; }
 
   // Sets color.
-  inline FacadeBuilder& setColor(std::shared_ptr<const utymap::mapcss::ColorGradient> gradient, double noiseFreq)
+  inline FacadeBuilder& setColor(std::shared_ptr<const utymap::mapcss::ColorGradient>& gradient, double noiseFreq)
   {
       gradient_ = gradient;
       colorNoiseFreq_ = noiseFreq;

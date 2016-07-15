@@ -135,9 +135,9 @@ public:
                      OnError* errorCallback)
     {
         safeExecute([&]() {
-            utymap::mapcss::StyleProvider& styleProvider = *getStyleProvider(styleFile);
-            ExportElementVisitor elementVisitor(stringTable_, styleProvider, quadKey.levelOfDetail, elementCallback);
-            quadKeyBuilder_.build(quadKey, styleProvider, getElevationProvider(quadKey),
+            auto styleProvider = getStyleProvider(styleFile);
+            ExportElementVisitor elementVisitor(stringTable_, *styleProvider, quadKey.levelOfDetail, elementCallback);
+            quadKeyBuilder_.build(quadKey, *styleProvider, getElevationProvider(quadKey),
                 [&meshCallback](const utymap::meshing::Mesh& mesh) {
                 // NOTE do not notify if mesh is empty.
                 if (!mesh.vertices.empty()) {

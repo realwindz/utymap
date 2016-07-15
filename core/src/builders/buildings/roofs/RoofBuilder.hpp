@@ -29,7 +29,7 @@ public:
     inline RoofBuilder& setMinHeight(double minHeight) { minHeight_ = minHeight; return *this; }
 
     // Sets color.
-    inline RoofBuilder& setColor(std::shared_ptr<const utymap::mapcss::ColorGradient> gradient, double noiseFreq)
+    inline RoofBuilder& setColor(std::shared_ptr<const utymap::mapcss::ColorGradient>& gradient, double noiseFreq)
     {
         gradient_ = gradient;
         colorNoiseFreq_ = noiseFreq;

@@ -5,7 +5,6 @@
 #include "entities/Element.hpp"
 #include "mapcss/StyleDeclaration.hpp"
 #include "index/StringTable.hpp"
-#include "utils/CompatibilityUtils.hpp"
 #include "utils/CoreUtils.hpp"
 #include "utils/GeoUtils.hpp"
 

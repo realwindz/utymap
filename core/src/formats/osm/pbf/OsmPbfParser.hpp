@@ -39,7 +39,7 @@ public:
     {
         finished_ = false;
 
-        while (!stream.eof() && !finished_) {
+        while (!stream.eof() && !stream.fail() && !finished_) {
             OSMPBF::BlobHeader header = readHeader(stream);
             if (!finished_) {
                 std::int32_t sz = readBlob(header, stream);

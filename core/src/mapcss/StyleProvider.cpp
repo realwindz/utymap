@@ -191,7 +191,7 @@ public:
                     else if (name == "relation") filtersPtr = &filters.relations;
                     else if (name == "canvas") filtersPtr = &filters.canvases;
                     else
-                        std::domain_error("Unexpected selector name:" + name);
+                        throw std::domain_error("Unexpected selector name:" + name);
 
                     Filter filter = Filter();
                     filter.conditions.reserve(selector.conditions.size());
@@ -201,7 +201,7 @@ public:
                         else if (condition.operation == "=") c.type = OpType::Equals;
                         else if (condition.operation == "!=") c.type = OpType::NotEquals;
                         else
-                            std::domain_error("Unexpected condition operation:" + condition.operation);
+                            throw std::domain_error("Unexpected condition operation:" + condition.operation);
 
                         c.key = stringTable.getId(condition.key);
                         c.value = stringTable.getId(condition.value);

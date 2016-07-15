@@ -160,7 +160,7 @@ private:
 
     void mergeResults(const Points& points, Points& result) const
     {
-        for (int i = 0; i < points.size(); ++i) {
+        for (std::size_t i = 0; i < points.size(); ++i) {
             Point candidate = points[i];
             if (result.size() > 0)  {
                 Point last = result[result.size() - 1];

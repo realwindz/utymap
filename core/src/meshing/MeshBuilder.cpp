@@ -99,7 +99,7 @@ public:
     inline void addPlane(Mesh& mesh, const Vector2& p1, const Vector2& p2, double ele1, double ele2, const MeshBuilder::Options& options) const
     {
         auto color = options.gradient->evaluate((NoiseUtils::perlin2D(p1.x, p1.y, options.colorNoiseFreq) + 1) / 2);
-        auto index = mesh.vertices.size() / 3;
+        int index = static_cast<int>(mesh.vertices.size() / 3);
 
         addVertex(mesh, p1, ele1, color, index);
         addVertex(mesh, p2, ele2, color, index + 2);
@@ -146,11 +146,11 @@ private:
 
     void fillMesh(triangulateio* io, Mesh& mesh, const MeshBuilder::Options& options) const
     {
-        auto triStartIndex = mesh.vertices.size() / 3;
+        int triStartIndex = static_cast<int>(mesh.vertices.size() / 3);
 
-        mesh.vertices.reserve(io->numberofpoints * 3 / 2);
-        mesh.triangles.reserve(io->numberoftriangles * 3);
-        mesh.colors.reserve(io->numberofpoints);
+        mesh.vertices.reserve(static_cast<std::size_t>(io->numberofpoints * 3 / 2));
+        mesh.triangles.reserve(static_cast<std::size_t>(io->numberoftriangles * 3));
+        mesh.colors.reserve(static_cast<std::size_t>(io->numberofpoints));
 
         for (int i = 0; i < io->numberofpoints; i++) {
             double x = io->pointlist[i * 2 + 0];
@@ -173,7 +173,7 @@ private:
             mesh.colors.push_back(color);
         }
 
-        for (int i = 0; i < io->numberoftriangles; i++) {
+        for (std::size_t i = 0; i < io->numberoftriangles; i++) {
             mesh.triangles.push_back(triStartIndex + io->trianglelist[i * io->numberofcorners + 1]);
             mesh.triangles.push_back(triStartIndex + io->trianglelist[i * io->numberofcorners + 0]);
             mesh.triangles.push_back(triStartIndex + io->trianglelist[i * io->numberofcorners + 2]);

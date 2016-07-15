@@ -24,6 +24,9 @@ public:
 
         MeshContext(const utymap::mapcss::Style& style,
                     const utymap::meshing::MeshBuilder::Options& options) :
+            startVertex(0), endVertex(0), 
+            startTriangle(0), endTriangle(0),
+            startColor(0), endColor(0),
             style(style), options(options)
         {
         }
