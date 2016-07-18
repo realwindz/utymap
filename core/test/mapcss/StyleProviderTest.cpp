@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(GivenSimpleEqualsCondition_WhenHasStyle_ThenReturnTrue)
 {
     int zoomLevel = 1;
     setSingleSelector(zoomLevel, zoomLevel, { "node" }, { { "amenity", "=", "biergarten" } });
-    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(),
+    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 0,
     { 
         std::make_pair("amenity", "biergarten") 
     });
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(GivenTwoNamesAndSimpleEqualsCondition_WhenHasStyleForSecond
 {
     int zoomLevel = 1;
     setSingleSelector(zoomLevel, zoomLevel, { "way", "node" }, { { "amenity", "=", "biergarten" } });
-    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(),
+    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 0,
     {
         std::make_pair("amenity", "biergarten")
     });
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(GivenSimpleEqualsConditionButDifferentZoomLevel_WhenHasStyl
 {
     int zoomLevel = 1;
     setSingleSelector(zoomLevel, zoomLevel, { "node" }, { { "amenity", "=", "biergarten" } });
-    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(),
+    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 0,
     { 
         std::make_pair("amenity", "biergarten") 
     });
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(GivenTwoEqualsConditions_WhenHasStyle_ThenReturnTrue)
             {"amenity", "=", "biergarten"},
             {"address", "=", "Invalidstr."}
         });
-    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(),
+    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 0,
         {
             std::make_pair("amenity", "biergarten"),
             std::make_pair("address", "Invalidstr.")
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(GivenTwoNotEqualsConditions_WhenHasStyle_ThenReturnFalse)
             {"amenity", "=", "biergarten"},
             {"address", "!=", "Invalidstr."}
         });
-    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(),
+    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 0,
         {
             std::make_pair("amenity", "biergarten"),
             std::make_pair("address", "Invalidstr.")

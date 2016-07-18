@@ -11,13 +11,13 @@ namespace UtyMap.Unity.Maps.Data
     public interface IElementEditor
     {
         /// <summary> Adds element. </summary>
-        void Add(Element element, Range<int> levelOfDetails);
+        void Add(MapStorageType storageType, Element element, Range<int> levelOfDetails);
 
         /// <summary> Edits element. </summary>
-        void Edit(Element element, Range<int> levelOfDetails);
+        void Edit(MapStorageType storageType, Element element, Range<int> levelOfDetails);
 
         /// <summary> Marks element with given id. </summary>
-        void Delete(long elementId, Range<int> levelOfDetails);
+        void Delete(MapStorageType storageType, long elementId, Range<int> levelOfDetails);
     }
 
     /// <summary>
@@ -37,9 +37,10 @@ namespace UtyMap.Unity.Maps.Data
         }
 
         /// <inheritdoc />
-        public void Add(Element element, Range<int> levelOfDetails)
+        public void Add(MapStorageType storageType, Element element, Range<int> levelOfDetails)
         {
-            CoreLibrary.AddElementToInMemoryStore(_resolver.Resolve(_stylesheet.Path),
+            CoreLibrary.AddElementToStore(storageType,
+                _resolver.Resolve(_stylesheet.Path),
                 element, levelOfDetails, message =>
                 {
                     if (!String.IsNullOrEmpty(message))
@@ -48,13 +49,13 @@ namespace UtyMap.Unity.Maps.Data
         }
 
         /// <inheritdoc />
-        public void Edit(Element element, Range<int> levelOfDetails)
+        public void Edit(MapStorageType storageType, Element element, Range<int> levelOfDetails)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public void Delete(long elementId, Range<int> levelOfDetails)
+        public void Delete(MapStorageType storageType, long elementId, Range<int> levelOfDetails)
         {
             throw new NotImplementedException();
         }

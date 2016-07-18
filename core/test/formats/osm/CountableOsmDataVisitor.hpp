@@ -1,5 +1,5 @@
-#ifndef TESTS_FORMATS_OSMDATAVISITOR_HPP_DEFINED
-#define TESTS_FORMATS_OSMDATAVISITOR_HPP_DEFINED
+#ifndef TESTS_FORMATS_COUNTABLEOSMDATAVISITOR_HPP_DEFINED
+#define TESTS_FORMATS_COUNTABLEOSMDATAVISITOR_HPP_DEFINED
 
 #include "BoundingBox.hpp"
 #include "GeoCoordinate.hpp"
@@ -9,14 +9,14 @@
 
 using namespace utymap::formats;
 
-struct TestOsmDataVisitor
+struct CountableOsmDataVisitor
 {
     int bounds;
     int nodes;
     int ways;
     int relations;
 
-    TestOsmDataVisitor() : bounds(0), nodes(0), ways(0), relations(0) {}
+    CountableOsmDataVisitor() : bounds(0), nodes(0), ways(0), relations(0) {}
 
     void visitBounds(utymap::BoundingBox bbox)
     {
@@ -39,4 +39,4 @@ struct TestOsmDataVisitor
     }
 };
 
-#endif // TESTS_FORMATS_OSMDATAVISITOR_HPP_DEFINED
+#endif // TESTS_FORMATS_COUNTABLEOSMDATAVISITOR_HPP_DEFINED

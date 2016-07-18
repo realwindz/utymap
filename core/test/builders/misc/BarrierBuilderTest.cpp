@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(GivenBarrier_WhenVisitWay_ThenMeshIsBuilt)
             BOOST_CHECK_GT(mesh.colors.size(), 0);
     });
     BarrierBuilder builder(*context);
-    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
+    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(), 0,
     { { "barrier", "yes" } },
     { { 0, 0 }, { 0, 10 }, { 10, 10 }, { 10, 0 } });
 

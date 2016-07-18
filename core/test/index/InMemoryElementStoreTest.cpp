@@ -28,12 +28,12 @@ namespace {
 
             auto styleProvider = dependencyProvider.getStyleProvider(stylesheet);
 
-            elementStore.store(ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
+            elementStore.store(ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(), 0,
             { { "any", "true" } }, { { 5, -5 }, { 5, -10 } }), range, *styleProvider);
-            elementStore.store(ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(),
+            elementStore.store(ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), 0,
             { { "any", "true" } }, { { 5, -5 }, { 5, -10 }, { 10, -10 } }), range, *styleProvider);
 
-            Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(),
+            Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 0,
             { { "any", "true" } });
             node.coordinate = { 5, -5 };
             elementStore.store(node, range, *styleProvider);

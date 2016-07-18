@@ -63,7 +63,7 @@ namespace {
         template<typename T>
         std::shared_ptr<T> createElement(std::initializer_list<std::pair<double, double>> geometry)
         {
-            return std::make_shared<T>(ElementUtils::createElement<T>(*dependencyProvider.getStringTable(), {}, geometry));
+            return std::make_shared<T>(ElementUtils::createElement<T>(*dependencyProvider.getStringTable(), 0, {}, geometry));
         }
 
         DependencyProvider dependencyProvider;

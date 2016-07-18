@@ -25,8 +25,8 @@ add_definitions(-DBOOST_TEST_DYN_LINK)
 set(HEADER_FILES
         ${PROTO_HDRS}
         config.hpp
-        formats/osm/TestOsmDataVisitor.hpp
-        formats/shape/TestShapeDataVisitor.hpp
+        formats/osm/CountableOsmDataVisitor.hpp
+        formats/shape/CountableShapeDataVisitor.hpp
         test_utils/DependencyProvider.hpp
         test_utils/ElementUtils.hpp
         )
