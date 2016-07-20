@@ -391,14 +391,8 @@ class clipperException : public std::exception
 class ClipperEx : public Clipper
 {
 public:
-    ClipperEx() : Clipper(0), edgeStartIndex_(0)
-    {
-    }
-
     void moveSubjectToClip();
     void removeSubject();
-private:
-    std::size_t edgeStartIndex_;
 };
 
 } //ClipperLib namespace
