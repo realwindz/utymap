@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(GivenOnlySingleTag_WhenDoubleEvaluate_ThenReturnValue)
     StyleDeclaration styleDeclaration(0, "eval(\"tag('height')\")");
 
     double result = styleDeclaration.evaluate<double>(
-        ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), { { "height", "2.5" } }).tags,
+        ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 0, { { "height", "2.5" } }).tags,
         *dependencyProvider.getStringTable());
 
     BOOST_CHECK_EQUAL(result, 2.5);
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(GiveTwoTags_WhenDoubleEvaluate_ThenReturnValue)
     StyleDeclaration styleDeclaration(0, "eval(\"tag('building:height') - tag('roof:height')\")");
 
     double result = styleDeclaration.evaluate<double>(ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(),
-         { { "building:height", "10" }, { "roof:height", "2.5" } }).tags,
+        0, { { "building:height", "10" }, { "roof:height", "2.5" } }).tags,
          *dependencyProvider.getStringTable());
 
     BOOST_CHECK_EQUAL(result, 7.5);
@@ -47,8 +47,8 @@ BOOST_AUTO_TEST_CASE(GiveOneTagOneNumber_WhenDoubleEvaluate_ThenReturnValue)
 {
     StyleDeclaration styleDeclaration(0, "eval(\"tag('building:levels') * 3\")");
 
-    double result = styleDeclaration.evaluate<double>(ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(),
-    { { "building:levels", "5" }}).tags,
+    double result = styleDeclaration.evaluate<double>(ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 
+        0, { { "building:levels", "5" } }).tags,
     *dependencyProvider.getStringTable());
 
     BOOST_CHECK_EQUAL(result, 15);
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(GiveRawValue_WhenDoubleEvaluate_ThenThrowsException)
     StyleDeclaration styleDeclaration(0, "13");
 
     BOOST_CHECK_THROW(styleDeclaration.evaluate<double>(ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(),
-    { { "building:levels", "5" } }).tags, *dependencyProvider.getStringTable()), 
+        0, { { "building:levels", "5" } }).tags, *dependencyProvider.getStringTable()),
     utymap::MapCssException);
 }
 
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(GiveOneTagOneNumber_WhenStringEvaluate_ThenReturnValue)
     StyleDeclaration styleDeclaration(0, "eval(\"tag('color')\")");
 
     std::string result = styleDeclaration.evaluate<std::string>(ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(),
-    { { "color", "red" } }).tags,
+        0, { { "color", "red" } }).tags,
     *dependencyProvider.getStringTable());
 
     BOOST_CHECK_EQUAL(result, "red");

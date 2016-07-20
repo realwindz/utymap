@@ -47,8 +47,8 @@ BOOST_AUTO_TEST_CASE(GivenLargeWater_WhenComplete_ThenMeshIsNotEmpty)
         }, nullptr);
     TerraBuilder terraBuilder(context);
     ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(),
-    { { "natural", "water" } },
-    { { 0, 0 }, { 20, 0 }, { 20, 20 }, { 0, 20 } }).accept(terraBuilder);
+        0, { { "natural", "water" } }, { { 0, 0 }, { 20, 0 }, { 20, 20 }, { 0, 20 } })
+        .accept(terraBuilder);
 
     terraBuilder.complete();
 

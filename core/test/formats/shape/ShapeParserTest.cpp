@@ -1,6 +1,6 @@
 #include "config.hpp"
 #include "formats/shape/ShapeParser.hpp"
-#include "formats/shape/TestShapeDataVisitor.hpp"
+#include "formats/shape/CountableShapeDataVisitor.hpp"
 
 #include <boost/test/unit_test.hpp>
 
@@ -12,8 +12,8 @@ namespace {
 
     struct Formats_Shape_ShapeParserFixture
     {
-        ShapeParser<TestShapeDataVisitor> parser;
-        TestShapeDataVisitor visitor;
+        ShapeParser<CountableShapeDataVisitor> parser;
+        CountableShapeDataVisitor visitor;
     };
 }
 

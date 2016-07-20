@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(GivenTree_WhenVisitNode_ThenMeshIsBuilt)
             BOOST_CHECK_GT(mesh.colors.size(), 0);
     }, nullptr);
 
-    Node tree = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 
+    Node tree = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 0,
     { { "natural", "tree" } });
     tree.coordinate = GeoCoordinate(52, 13);
     TreeBuilder builder(context);

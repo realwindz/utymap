@@ -27,8 +27,7 @@ BOOST_AUTO_TEST_CASE(GivenValueInMeters_WhenGetValue_ThenReturnPositiveValue)
 {
     int lod = 16;
     Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
-    { std::make_pair("meters", "") },
-    { { 52.52975 , 13.38810 } });
+        0, { std::make_pair("meters", "") }, { { 52.52975 , 13.38810 } });
     Style style = dependencyProvider.getStyleProvider(stylesheet)->forElement(way, lod);
 
     double width = style.getValue("width", lod, way.coordinates[0]);
@@ -40,8 +39,7 @@ BOOST_AUTO_TEST_CASE(GivenValueInPercents_WhenGetValue_ThenReturnPositiveValue)
 {
     int lod = 16;
     Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
-    { std::make_pair("percent", "") },
-    { { 52.52975, 13.38810 } });
+        0, { std::make_pair("percent", "") }, { { 52.52975, 13.38810 } });
     Style style = dependencyProvider.getStyleProvider(stylesheet)->forElement(way, lod);
 
     double width = style.getValue("width", lod, way.coordinates[0]);
@@ -53,8 +51,7 @@ BOOST_AUTO_TEST_CASE(GivenNegativeValueInMeters_WhenGetValue_ThenReturnExpectedV
 {
     int lod = 16;
     Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
-    { std::make_pair("water", "") },
-    { { 52.52975, 13.38810 } });
+        0, { std::make_pair("water", "") }, { { 52.52975, 13.38810 } });
     Style style = dependencyProvider.getStyleProvider(stylesheet)->forElement(way, lod);
 
     double width = style.getValue("width", 1);
