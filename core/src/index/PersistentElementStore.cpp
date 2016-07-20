@@ -60,7 +60,6 @@ namespace {
             writeFlags(1);
             writeTags(way.tags);
             std::uint16_t size = static_cast<std::uint16_t>(way.coordinates.size());
-            dataFile_.write(reinterpret_cast<const char*>(&size), sizeof(size));
             for (const auto& coord : way.coordinates) {
                 writeCoordinate(coord);
             }
@@ -71,10 +70,10 @@ namespace {
             writeFlags(2);
             writeTags(area.tags);
             // NOTE do not write the last one
-            std::uint16_t size = static_cast<std::uint16_t>(area.coordinates.size());
-            dataFile_.write(reinterpret_cast<const char*>(&size), sizeof(size));
-            for (const auto& coord : area.coordinates) {
-                writeCoordinate(coord);
+            auto coordSize = area.coordinates.size() - 1;
+            std::uint16_t size = static_cast<std::uint16_t>(coordSize);
+            for (std::size_t i = 0; i < coordSize; ++i) {
+                writeCoordinate(area.coordinates[i]);
             }
         }
 
@@ -82,8 +81,6 @@ namespace {
         {
             writeFlags(3);
             writeTags(relation.tags);
-            std::uint16_t elementSize = static_cast<std::uint16_t>(relation.elements.size());
-            dataFile_.write(reinterpret_cast<const char*>(&elementSize), sizeof(elementSize));
             for (const auto& element : relation.elements) {
                 dataFile_.write(reinterpret_cast<const char*>(&element->id), sizeof(element->id));
                 element->accept(*this);
@@ -164,7 +161,7 @@ namespace {
         {
             auto way = std::make_shared<Way>();
             way->tags = readTags();
-            way->coordinates = readCoordinates();
+            way->coordinates = readCoordinates(false);
             return way;
         }
 
@@ -172,7 +169,7 @@ namespace {
         {
             auto area = std::make_shared<Area>();
             area->tags = readTags();
-            area->coordinates = readCoordinates();
+            area->coordinates = readCoordinates(true);
             return area;
         }
 
@@ -184,11 +181,7 @@ namespace {
             dataFile_.read(reinterpret_cast<char*>(&elementSize), sizeof(elementSize));
 
             for (std::uint16_t i = 0; i < elementSize; ++i) {
-                std::uint64_t id;
-                dataFile_.read(reinterpret_cast<char*>(&id), sizeof(id));
-                auto element = readElement();
-                element->id = id;
-                relation->elements.push_back(element);
+                relation->elements.push_back(readElement());
             }
             return relation;
         }
@@ -201,10 +194,12 @@ namespace {
             return coord;
         }
 
-        inline std::vector<GeoCoordinate> readCoordinates()
+        inline std::vector<GeoCoordinate> readCoordinates(bool hasExtraElement)
         {
             std::uint16_t coordSize;
             dataFile_.read(reinterpret_cast<char*>(&coordSize), sizeof(coordSize));
+            if (hasExtraElement) 
+                ++coordSize;
 
             std::vector<GeoCoordinate> coordinates;
             coordinates.reserve(coordSize);

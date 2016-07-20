@@ -46,8 +46,9 @@ BOOST_AUTO_TEST_CASE(GivenNode_WhenVisit_ThenIncrementsCounter)
 
 BOOST_AUTO_TEST_CASE(GivenNodeWithTwoTags_WhenToString_ThenReturnsValidRepresentation)
 {
-    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 1,
+    Node node = ElementUtils::createElement<Node>(*dependencyProvider.getStringTable(), 
     { {"key1", "value1"}, {"key2", "value2"} });
+    node.id = 1;
 
     std::string result = node.toString(*dependencyProvider.getStringTable());
 

@@ -16,11 +16,9 @@ public:
 
     template <typename T>
     static T createElement(utymap::index::StringTable& stringTable,
-                           std::uint64_t id,
                            std::initializer_list<std::pair<const char*, const char*>> tags)
     {
         T t;
-        t.id = id;
         for (const auto& pair : tags) {
             t.tags.push_back(createTag(stringTable, pair.first, pair.second));
         }
@@ -29,11 +27,10 @@ public:
 
     template <typename T>
     static T createElement(utymap::index::StringTable& stringTable,
-                           std::uint64_t id,
                            std::initializer_list<std::pair<const char*, const char*>> tags,
                            std::initializer_list<std::pair<double, double>> geometry)
     {
-        T t = createElement<T>(stringTable, id, tags);
+        T t = createElement<T>(stringTable, tags);
         t.coordinates.reserve(geometry.size());;
         for (const auto& pair : geometry) {
             t.coordinates.push_back(utymap::GeoCoordinate(pair.first, pair.second));

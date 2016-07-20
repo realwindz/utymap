@@ -147,12 +147,16 @@ void ElementGeometryClipper::visitRelation(const Relation& relation)
 {
     struct RelationVisitor : public ElementVisitor
     {
+        Relation data;
+
         RelationVisitor(const BoundingBox& quadKeyBbox, ClipperLib::Clipper& clipper) :
                 bbox_(quadKeyBbox), clipper_(clipper) { }
 
-        void visitNode(const Node& node) 
+        void visitNode(const Node& node)
         {
-            // TODO
+            if (bbox_.contains(node.coordinate)) {
+                data.elements.push_back(std::make_shared<Node>(node));
+            }
         }
 
         void visitWay(const Way& way)
