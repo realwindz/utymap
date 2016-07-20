@@ -1,6 +1,6 @@
 #include "BoundingBox.hpp"
 #include "formats/osm/pbf/OsmPbfParser.hpp"
-#include "formats/osm/TestOsmDataVisitor.hpp"
+#include "formats/osm/CountableOsmDataVisitor.hpp"
 #include "config.hpp"
 
 #include <boost/test/unit_test.hpp>
@@ -24,8 +24,8 @@ namespace {
             google::protobuf::ShutdownProtobufLibrary();
         }
 
-        OsmPbfParser<TestOsmDataVisitor> parser;
-        TestOsmDataVisitor visitor;
+        OsmPbfParser<CountableOsmDataVisitor> parser;
+        CountableOsmDataVisitor visitor;
         std::ifstream istream;
     };
 

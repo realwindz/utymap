@@ -77,7 +77,7 @@ BOOST_FIXTURE_TEST_SUITE(Index_ElementStore, Index_ElementStoreFixture)
 
 BOOST_AUTO_TEST_CASE(GivenWayIntersectsTwoTilesOnce_WhenStore_GeometryIsClipped)
 {
-    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
+    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(), 0,
         { { "test", "Foo" } },
         { { 10, 10 }, { 10, -10 }});
     TestElementStore elementStore(*dependencyProvider.getStringTable(),
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(GivenWayIntersectsTwoTilesOnce_WhenStore_GeometryIsClipped)
 
 BOOST_AUTO_TEST_CASE(GivenWayIntersectsTwoTilesTwice_WhenStore_GeometryIsClipped)
 {
-    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
+    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(), 0,
     { { "test", "Foo" } },
     { { 10, 10 }, { 10, -10 }, { 20, -10 }, {20, 10} });
     TestElementStore elementStore(*dependencyProvider.getStringTable(),
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(GivenWayIntersectsTwoTilesTwice_WhenStore_GeometryIsClipped
 
 BOOST_AUTO_TEST_CASE(GivenWayOutsideTileWithBoundingBoxIntersectingTile_WhenStore_IsSkipped)
 {
-    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
+    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(), 0,
     { { "test", "Foo" } },
     { { -10, 20 }, { -5, -10 }, { 10, -10 } });
     TestElementStore elementStore(*dependencyProvider.getStringTable(),
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(GivenWayOutsideTileWithBoundingBoxIntersectingTile_WhenStor
 
 BOOST_AUTO_TEST_CASE(GivenAreaIntersectsTwoTilesOnce_WhenStore_GeometryIsClipped)
 {
-    Area area = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(),
+    Area area = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), 0,
     { { "test", "Foo" } },
     { { 10, 10 }, { 20, 10 }, { 20, -10 }, { 10, -10 } });
     TestElementStore elementStore(*dependencyProvider.getStringTable(),
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(GivenAreaIntersectsTwoTilesOnce_WhenStore_GeometryIsClipped
 
 BOOST_AUTO_TEST_CASE(GivenAreaIntersectsTwoTilesTwice_WhenStore_GeometryIsClipped)
 {
-    Area area = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(),
+    Area area = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), 0,
     { { "test", "Foo" } },
     { { 20, 10 }, { 20, -10 }, { 5, -10 }, { 5, 10 }, { 10, 10 }, { 10, -5 }, { 15, -5 }, { 15, 10 } });
     TestElementStore elementStore(*dependencyProvider.getStringTable(),
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(GivenAreaIntersectsTwoTilesTwice_WhenStore_GeometryIsClippe
 
 BOOST_AUTO_TEST_CASE(GivenAreaBiggerThanTile_WhenStore_GeometryIsEmpty)
 {
-    Area area = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(),
+    Area area = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), 0,
     { { "test", "Foo" } },
     { { -10, -10 }, { -10, 181 }, { 91, 181 }, { 91, -10 } });
     TestElementStore elementStore(*dependencyProvider.getStringTable(),
@@ -224,9 +224,9 @@ BOOST_AUTO_TEST_CASE(GivenAreaBiggerThanTile_WhenStore_GeometryIsEmpty)
 
 BOOST_AUTO_TEST_CASE(GivenRelationOfPolygonWithHole_WhenStore_AreaIsReturnedWithClippedGeometry)
 {
-    Area outer = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), {},
+    Area outer = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), 0, {},
     { { 5, 10 }, { 20, 10 }, { 20, -10 }, {5, -10} });
-    Area inner = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), {},
+    Area inner = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), 0, {},
     { { 10, 5 }, { 15, 5 }, { 15, -5 }, { 10, -5 } });
     Relation relation;
     relation.tags = std::vector<Tag>{ ElementUtils::createTag(*dependencyProvider.getStringTable(), "test", "Foo") };
@@ -257,9 +257,9 @@ BOOST_AUTO_TEST_CASE(GivenRelationOfPolygonWithHole_WhenStore_AreaIsReturnedWith
 
 BOOST_AUTO_TEST_CASE(GivenRelationOfPolygonWithHole_WhenStore_RelationIsReturnedWithClippedGeometry)
 {
-    Area outer = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), {},
+    Area outer = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), 0, {},
     { { 5, 10 }, { 20, 10 }, { 20, -10 }, { 5, -10 } });
-    Area inner = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), {},
+    Area inner = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), 0, {},
     { { 10, 8 }, { 15, 8 }, { 15, 2 }, { 10, 2 } });
     Relation relation;
     relation.tags = std::vector<Tag>{ ElementUtils::createTag(*dependencyProvider.getStringTable(), "test", "Foo") };
@@ -289,7 +289,7 @@ BOOST_AUTO_TEST_CASE(GivenRelationOfPolygonWithHole_WhenStore_RelationIsReturned
 
 BOOST_AUTO_TEST_CASE(GivenWay_WhenStoreInsideQuadKey_IsStored)
 {
-    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
+    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(), 0,
     { { "test", "Foo" } }, { { 5, 5 }, { 10, 10 } });
     TestElementStore elementStore(*dependencyProvider.getStringTable(),
         [&](const Element& element, const QuadKey& quadKey) {
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(GivenWay_WhenStoreInsideQuadKey_IsStored)
 
 BOOST_AUTO_TEST_CASE(GivenWayWithSmallSize_WhenStore_IsSkipped)
 {
-    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
+    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(), 0,
     { { "test", "Foo" } }, { { 5, 5 }, { 10, 10 } });
     TestElementStore elementStore(*dependencyProvider.getStringTable(),
        [&](const Element& element, const QuadKey& quadKey) {});
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE(GivenWayWithSmallSize_WhenStore_IsSkipped)
 
 BOOST_AUTO_TEST_CASE(GivenWayWithLargeSize_WhenStore_IsStored)
 {
-    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(),
+    Way way = ElementUtils::createElement<Way>(*dependencyProvider.getStringTable(), 0,
     { { "test", "Foo" } }, { { 5, 5 }, { 100, 100 } });
     TestElementStore elementStore(*dependencyProvider.getStringTable(),
         [&](const Element& element, const QuadKey& quadKey) {});

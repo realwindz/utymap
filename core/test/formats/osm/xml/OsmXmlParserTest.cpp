@@ -1,6 +1,6 @@
 #include "BoundingBox.hpp"
 #include "formats/osm/xml/OsmXmlParser.hpp"
-#include "formats/osm/TestOsmDataVisitor.hpp"
+#include "formats/osm/CountableOsmDataVisitor.hpp"
 #include "config.hpp"
 
 #include <boost/test/unit_test.hpp>
@@ -15,8 +15,8 @@ namespace {
         {
         }
 
-        OsmXmlParser<TestOsmDataVisitor> parser;
-        TestOsmDataVisitor visitor;
+        OsmXmlParser<CountableOsmDataVisitor> parser;
+        CountableOsmDataVisitor visitor;
         std::ifstream istream;
     };
 }

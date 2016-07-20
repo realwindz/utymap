@@ -33,7 +33,7 @@ namespace {
         T createRoofBuilder()
         {
             builderContext = dependencyProvider.createBuilderContext(QuadKey(16, 1, 0), stylesheet);
-            Area building = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), { { "building", "yes" } }, {});
+            Area building = ElementUtils::createElement<Area>(*dependencyProvider.getStringTable(), 0, { { "building", "yes" } }, {});
             style = std::make_shared<Style>(dependencyProvider.getStyleProvider(stylesheet)->forElement(building, 16));
             mesh = std::make_shared<Mesh>("");
             meshContext = std::make_shared<MeshContext>(*mesh, *style);

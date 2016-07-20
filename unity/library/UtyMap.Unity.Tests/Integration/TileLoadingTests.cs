@@ -69,7 +69,7 @@ namespace UtyMap.Unity.Tests.Integration
             var range = new Range<int>(LevelOfDetails, LevelOfDetails);
             _compositionRoot
                 .GetService<IMapDataLoader>()
-                .AddToInMemoryStore(mapDataPath, _tileController.Stylesheet, range);
+                .AddToStore(MapStorageType.InMemory, mapDataPath, _tileController.Stylesheet, range);
         }
 
         /// <summary> Checks whether data satisfied minimal correctness critirea. </summary>
