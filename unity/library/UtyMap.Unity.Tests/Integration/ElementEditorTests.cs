@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UtyMap.Unity;
 using UtyMap.Unity.Core;
 using UtyMap.Unity.Core.Models;
 using UtyMap.Unity.Core.Tiling;
@@ -49,7 +50,7 @@ namespace UtyMap.Unity.Tests.Integration
                 new Dictionary<string, string>() { { "featurecla", "Populated place" } }, 
                 new Dictionary<string, string>());
 
-            _elementEditor.Add(MapStorageType.InMemory, node, levelOfDetails);
+            _elementEditor.Add(node, levelOfDetails);
 
             Union<Element, Mesh> result = default(Union<Element, Mesh>);
             _dataLoader

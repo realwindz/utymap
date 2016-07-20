@@ -20,11 +20,10 @@ namespace UtyMap.Unity.Maps.Data
     public interface IMapDataLoader
     {
         /// <summary> Adds mapdata to in-memory storage. </summary>
-        /// <param name="storage"> Storage type. </param>
         /// <param name="dataPath"> Path to mapdata. </param>
         /// <param name="stylesheet"> Stylesheet which to use during import. </param>
         /// <param name="levelOfDetails"> Which level of details to use. </param>
-        void AddToStore(MapStorageType storage, string dataPath, Stylesheet stylesheet, Range<int> levelOfDetails);
+        void AddToInMemoryStore(string dataPath, Stylesheet stylesheet, Range<int> levelOfDetails);
 
         /// <summary> Loads given tile. This method triggers real loading and processing osm data. </summary>
         /// <param name="tile">Tile to load.</param>
@@ -61,16 +60,16 @@ namespace UtyMap.Unity.Maps.Data
         }
 
         /// <inheritdoc />
-        public void AddToStore(MapStorageType storageType, string dataPath, Stylesheet stylesheet, Range<int> levelOfDetails)
+        public void AddToInMemoryStore(string dataPath, Stylesheet stylesheet, Range<int> levelOfDetails)
         {
             var dataPathResolved = _pathResolver.Resolve(dataPath);
             var stylesheetPathResolved = _pathResolver.Resolve(stylesheet.Path);
 
-            Trace.Info(TraceCategory, String.Format("add to {0} storage: data:{1} style: {2}",
-                storageType, dataPathResolved, stylesheetPathResolved));
+            Trace.Info(TraceCategory, "add to in-memory storage: data:{0} style: {1}",
+                dataPathResolved, stylesheetPathResolved);
 
             string errorMsg = null;
-            CoreLibrary.AddToStore(storageType, stylesheetPathResolved, dataPathResolved, levelOfDetails,
+            CoreLibrary.AddToInMemoryStore(stylesheetPathResolved, dataPathResolved, levelOfDetails, 
                 error => errorMsg = error);
 
             if (errorMsg != null)
@@ -96,11 +95,10 @@ namespace UtyMap.Unity.Maps.Data
             _cachePath = configSection.GetString(@"data/cache", null);
 
             var stringPath = _pathResolver.Resolve(configSection.GetString("data/index/strings"));
-            var mapDataPath = _pathResolver.Resolve(configSection.GetString("data/index/spatial"));
             var elePath = _pathResolver.Resolve(configSection.GetString("data/elevation/local"));
 
             string errorMsg = null;
-            CoreLibrary.Configure(stringPath, mapDataPath, elePath, error => errorMsg = error);
+            CoreLibrary.Configure(stringPath, elePath, error => errorMsg = error);
             if (errorMsg != null)
                 throw new MapDataException(errorMsg);
         }
@@ -202,7 +200,7 @@ namespace UtyMap.Unity.Maps.Data
         {
             Trace.Info(TraceCategory, "try to save: {0} from {1}", tile.ToString(), filePath);
             string errorMsg = null;
-            CoreLibrary.AddToStore(MapStorageType.InMemory,
+            CoreLibrary.AddToInMemoryStore(
                 _pathResolver.Resolve(tile.Stylesheet.Path),
                 _pathResolver.Resolve(filePath),
                 tile.QuadKey,

@@ -76,7 +76,7 @@ namespace UtyMap.Unity.Tests
             var mapDataLoader = _compositionRoot.GetService<IMapDataLoader>();
             var stylesheet = _compositionRoot.GetService<Stylesheet>();
 
-            mapDataLoader.AddToStore(MapStorageType.InMemory, TestHelper.BerlinXmlData, stylesheet,
+            mapDataLoader.AddToInMemoryStore(TestHelper.BerlinXmlData, stylesheet,
                 new Range<int>(LevelOfDetails, LevelOfDetails));
         }
     }

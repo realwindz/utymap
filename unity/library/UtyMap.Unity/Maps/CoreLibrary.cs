@@ -1,36 +1,24 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Runtime.InteropServices;
 using UtyMap.Unity.Core;
 using UtyMap.Unity.Core.Models;
 using UtyMap.Unity.Infrastructure.Primitives;
-using UtyMap.Unity.Maps.Data;
 
 namespace UtyMap.Unity.Maps
 {
     /// <summary> Provides the way to build tile encapsulating Utymap implementation. </summary>
     internal static class CoreLibrary
     {
-        private const string InMemoryStoreKey = "InMemory";
-        private const string PersistentStoreKey = "Persistent";
+        private const string InMemoryStore = "InMemory";
 
         /// <summary> Configure utymap. Should be called first. </summary>
         /// <param name="stringPath"> Path to string table. </param>
-        /// <param name="mapDataPath">Path for map data. </param>
         /// <param name="elePath"> Path to elevation data. </param>
         /// <param name="onError"> OnError callback. </param>
-        public static void Configure(string stringPath, string mapDataPath, string elePath, OnError onError)
+        public static void Configure(string stringPath, string elePath, OnError onError)
         {
             configure(stringPath, elePath, onError);
-
-            // NOTE actually, it is possible to have multiple in-memory and persistent 
-            // storages at the same time.
-            registerInMemoryStore(InMemoryStoreKey);
-            registerPersistentStore(PersistentStoreKey, mapDataPath);
-
-            // NOTE core library can't create directories so far
-            for (int i = 1; i <= 16; ++i)
-                Directory.CreateDirectory(Path.Combine(mapDataPath, i.ToString()));
+            registerInMemoryStore(InMemoryStore);
         }
 
         /// <summary> Preloads elevation data for given quadkey. </summary>
@@ -44,31 +32,29 @@ namespace UtyMap.Unity.Maps
         ///     Adds map data to in-memory storage to specific level of detail range.
         ///     Supported formats: shapefile, osm xml, osm pbf.
         /// </summary>
-        /// <param name="storageType"> Map data storage. </param>
         /// <param name="stylePath"> Stylesheet path. </param>
         /// <param name="path"> Path to file. </param>
         /// <param name="levelOfDetails"> Specifies level of details for which data should be imported. </param>
         /// <param name="onError"> OnError callback. </param>
-        public static void AddToStore(MapStorageType storageType, string stylePath, string path, Range<int> levelOfDetails, OnError onError)
+        public static void AddToInMemoryStore(string stylePath, string path, Range<int> levelOfDetails, OnError onError)
         {
-            addToStoreInRange(GetStoreKey(storageType), stylePath, path, levelOfDetails.Minimum, levelOfDetails.Maximum, onError);
+            addToStoreInRange(InMemoryStore, stylePath, path, levelOfDetails.Minimum, levelOfDetails.Maximum, onError);
         }
 
         /// <summary>
         ///     Adds map data to in-memory storage to specific quadkey.
         ///     Supported formats: shapefile, osm xml, osm pbf.
         /// </summary>
-        /// <param name="storageType"> Map data storage. </param>
         /// <param name="stylePath"> Stylesheet path. </param>
         /// <param name="path"> Path to file. </param>
         /// <param name="quadKey"> QuadKey. </param>
         /// <param name="onError"> OnError callback. </param>
-        public static void AddToStore(MapStorageType storageType, string stylePath, string path, QuadKey quadKey, OnError onError)
+        public static void AddToInMemoryStore(string stylePath, string path, QuadKey quadKey, OnError onError)
         {
-            addToStoreInQuadKey(GetStoreKey(storageType), stylePath, path, quadKey.TileX, quadKey.TileY, quadKey.LevelOfDetail, onError);
+            addToStoreInQuadKey(InMemoryStore, stylePath, path, quadKey.TileX, quadKey.TileY, quadKey.LevelOfDetail, onError);
         }
 
-        public static void AddElementToStore(MapStorageType storageType, string stylePath, Element element, Range<int> levelOfDetails, OnError onError)
+        public static void AddElementToInMemoryStore(string stylePath, Element element, Range<int> levelOfDetails, OnError onError)
         {
             double[] coordinates = new double[element.Geometry.Length*2];
             for (int i = 0; i < element.Geometry.Length; ++i)
@@ -85,7 +71,7 @@ namespace UtyMap.Unity.Maps
                 tags[i*2 + 1] = element.Tags[tagKeys[i]];
             }
 
-            addToStoreElement(GetStoreKey(storageType), stylePath, element.Id,
+            addToStoreElement(InMemoryStore, stylePath, element.Id,
                 coordinates, coordinates.Length,
                 tags, tags.Length, 
                 levelOfDetails.Minimum, levelOfDetails.Maximum, onError);
@@ -117,16 +103,7 @@ namespace UtyMap.Unity.Maps
             cleanup();
         }
 
-        #region Private members
-
-        private static string GetStoreKey(MapStorageType storageType)
-        {
-            return storageType == MapStorageType.InMemory ? InMemoryStoreKey : PersistentStoreKey;
-        }
-
-        #endregion
-
-        #region PInvoke import
+        #region PInvoke import 
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void OnMeshBuilt([In] string name,
@@ -147,10 +124,7 @@ namespace UtyMap.Unity.Maps
         private static extern void configure(string stringPath, string elePath, OnError errorHandler);
 
         [DllImport("UtyMap.Shared", CallingConvention = CallingConvention.StdCall)]
-        private static extern void registerInMemoryStore(string key);
-
-        [DllImport("UtyMap.Shared", CallingConvention = CallingConvention.StdCall)]
-        private static extern void registerPersistentStore(string key, string path);
+        private static extern void registerInMemoryStore(string stringPath);
 
         [DllImport("UtyMap.Shared", CallingConvention = CallingConvention.StdCall)]
         private static extern void addToStoreInRange(string key, string stylePath, string path, int startLod, int endLod, OnError errorHandler);

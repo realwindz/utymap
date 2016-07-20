@@ -1,5 +1,5 @@
-#ifndef TESTS_FORMATS_COUNTABLESHAPEDATAVISITOR_HPP_DEFINED
-#define TESTS_FORMATS_COUNTABLESHAPEDATAVISITOR_HPP_DEFINED
+#ifndef TESTS_FORMATS_SHAPEDATAVISITOR_HPP_DEFINED
+#define TESTS_FORMATS_SHAPEDATAVISITOR_HPP_DEFINED
 
 #include "BoundingBox.hpp"
 #include "GeoCoordinate.hpp"
@@ -9,7 +9,7 @@
 
 using namespace utymap::formats;
 
-struct CountableShapeDataVisitor
+struct TestShapeDataVisitor
 {
     int bounds;
     int nodes;
@@ -22,7 +22,7 @@ struct CountableShapeDataVisitor
     Tags lastTags;
     bool isRing;
 
-    CountableShapeDataVisitor() : bounds(0), nodes(0), ways(0), relations(0),
+    TestShapeDataVisitor() : bounds(0), nodes(0), ways(0), relations(0),
         lastCoordinate(), lastCoordinates(), lastTags(), isRing() {}
 
     void visitBounds(utymap::BoundingBox bbox)
@@ -53,4 +53,4 @@ struct CountableShapeDataVisitor
     }
 };
 
-#endif // TESTS_FORMATS_COUNTABLESHAPEDATAVISITOR_HPP_DEFINED
+#endif // TESTS_FORMATS_SHAPEDATAVISITOR_HPP_DEFINED
