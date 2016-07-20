@@ -72,13 +72,8 @@ namespace Assets.Scripts
 
             try
             {
-                var config = ConfigBuilder.GetDefault()
-                    .SetStringIndex("Index/")
-                    .SetSpatialIndex("Index/")
-                    .Build();
-
                 // create entry point for utymap functionallity
-                _compositionRoot = new CompositionRoot(_container, config)
+                _compositionRoot = new CompositionRoot(_container, configBuilder.Build())
                     .RegisterAction((c, _) => c.RegisterInstance<ITrace>(_trace))
                     .RegisterAction((c, _) => c.Register(Component.For<IPathResolver>().Use<DemoPathResolver>()))
                     .RegisterAction((c, _) => c.Register(Component.For<IModelBuilder>().Use<DemoModelBuilder>()))
@@ -151,10 +146,9 @@ namespace Assets.Scripts
                 // game is started. Also you can specify different zoom level if you
                 // have valid mapcss stylesheet
                 _compositionRoot.GetService<IMapDataLoader>()
-                    .AddToStore(MapStorageType.InMemory,
-                        @"Osm/berlin.osm.xml",
-                        _compositionRoot.GetService<Stylesheet>(),
-                        new Range<int>(_zoomLevel, _zoomLevel));
+                    .AddToInMemoryStore(@"Osm/berlin.osm.xml", 
+                    _compositionRoot.GetService<Stylesheet>(), 
+                    new Range<int>(_zoomLevel, _zoomLevel));
 
                 IsInitialized = true;
             }
