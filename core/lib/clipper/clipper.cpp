@@ -4457,22 +4457,26 @@ std::ostream& operator <<(std::ostream &s, const Paths &p)
 
 void ClipperEx::moveSubjectToClip()
 {
-    for (auto& edge : m_edges) {
-        if (edge->PolyTyp == ptClip) continue;
-        TEdge* e = edge;
-        do {
-            e->PolyTyp = ptClip;
-            e = e->Next;
-        } while (e->Next && e != edge);
+    if (m_edges.empty())
+        return;
+
+    for (std::size_t i = edgeStartIndex_; i < m_edges.size(); ++i) {
+        auto edge = m_edges[i];
+
+        while (edge && edge->PolyTyp != ptClip) {
+            edge->PolyTyp = ptClip;
+            edge = edge->Next;
+        }
     }
+
+    edgeStartIndex_ = m_edges.size() - 1;
 }
 
 void ClipperEx::removeSubject()
 {
     for (auto it = m_MinimaList.begin(); it != m_MinimaList.end();)
     {
-        if (it->LeftBound->PolyTyp == ptClip)
-        {
+        if (it->LeftBound->PolyTyp == ptClip) {
             ++it;
             continue;
         }
@@ -4481,8 +4485,7 @@ void ClipperEx::removeSubject()
 
     for (auto it = m_edges.begin(); it != m_edges.end();)
     {
-        if ((*it)->PolyTyp == ptClip)
-        {
+        if ((*it)->PolyTyp == ptClip) {
             ++it;
             continue;
         }
